@@ -106,7 +106,7 @@
 
 ## 브랜치·배포
 
-- **모든 변경(글과 코드)은 `main`에 push한다.** push하면 GitHub Actions가 `npm run check` → `npm run build` → 배포를 실행한다.
+- **모든 변경(글과 코드)은 `main`에 push한다.** push하면 GitHub Actions가 `npm test` → `npm run check` → `npm run build` → 배포를 실행한다.
 - 큰 코드 변경을 나눠 작업하고 싶으면 짧은 작업 브랜치를 만들었다가 `main`에 merge하고 지운다. 상시 유지하는 브랜치는 `main` 하나다.
 - 글 하나의 빌드 오류는 블로그 배포만 막는다. 사이트는 마지막 성공 배포본을 계속 보여 주므로 내려가지는 않는다. 포트폴리오에는 영향이 없다.
 
@@ -116,8 +116,9 @@
 2. 슬러그 오류(중복·형식)인지 확인한다 (`Blog post slug check failed`, 겹친 경로가 로그에 나온다).
 3. 이미지 경로 오류인지 확인한다 (`ImageNotFound`: 링크한 이미지 파일이 없거나 경로가 틀림).
 4. 타입 오류인지 확인한다 (`npm run check` 단계).
+5. 단위 테스트 실패인지 확인한다 (`npm test` 단계, 실패한 테스트 이름이 기대 동작을 알려 준다).
 
-로컬에서 먼저 확인하려면 `npm run check`와 `npm run build`를 실행한다.
+로컬에서 먼저 확인하려면 `npm test`, `npm run check`, `npm run build`를 실행한다.
 
 ## 검색 노출
 
