@@ -27,7 +27,7 @@ const isList = Astro.url.pathname === home;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="author" content={authorName} />
-    <meta name="theme-color" content="#f8f8f6" />
+    <meta name="theme-color" content="#f0eee6" />
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" type="application/rss+xml" title={blogTitle} href={rssUrl.href} />
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
@@ -43,14 +43,21 @@ const isList = Astro.url.pathname === home;
   </head>
   <body>
     <a class="skip" href="#main">본문으로 건너뛰기</a>
-    <header class="blog-header">
-      <a class="blog-home" href={home}>{blogTitle}</a>
-      <nav aria-label="블로그 메뉴">
-        <a href={home} aria-current={isList ? 'page' : undefined}>글 목록</a>
-        {/* The portfolio is a separate site on the same domain, so no base prefix. */}
-        <a href="/general/">포트폴리오</a>
-      </nav>
-    </header>
+    <div class="masthead">
+      <header class="blog-header">
+        <a class="blog-home" href={home}>{blogTitle}</a>
+        <nav aria-label="블로그 메뉴">
+          <a href={home} aria-current={isList ? 'page' : undefined}>글 목록</a>
+          {/* The portfolio is a separate site on the same domain, so no base prefix. */}
+          <a href="/general/">포트폴리오</a>
+        </nav>
+      </header>
+      {Astro.slots.has('hero') && (
+        <div class="masthead-hero">
+          <div class="hero"><slot name="hero" /></div>
+        </div>
+      )}
+    </div>
     <main id="main" class="blog-main">
       <slot />
     </main>

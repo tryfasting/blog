@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { isDraft, isVisible } from './lib/draft.ts';
+import { readingMinutes } from './lib/reading.ts';
 import { findSlugProblems, slugFromId, tagSlug } from './lib/slug.ts';
 import { joinBase } from './lib/url.ts';
 
@@ -22,6 +23,10 @@ export function postSource(post: Post): string {
 function assertValidSlugs(posts: Post[]): void {
   const problems = findSlugProblems(posts.map((post) => ({ id: post.id, source: postSource(post) })));
   if (problems.length > 0) throw new Error(`Blog post slug check failed:\n${problems.join('\n')}`);
+}
+
+export function postReadingMinutes(post: Post): number {
+  return readingMinutes(post.body ?? '');
 }
 
 export function postIsDraft(post: Post): boolean {

@@ -1,7 +1,17 @@
 ---
 import { render } from 'astro:content';
 import BlogLayout from '../blog/BlogLayout.astro';
-import { formatDate, getVisiblePosts, isoDate, postIsDraft, postSlug, tagUrl, withBase, type Post } from '../blog/posts';
+import {
+  formatDate,
+  getVisiblePosts,
+  isoDate,
+  postIsDraft,
+  postReadingMinutes,
+  postSlug,
+  tagUrl,
+  withBase,
+  type Post,
+} from '../blog/posts';
 
 export async function getStaticPaths() {
   const posts = await getVisiblePosts();
@@ -15,18 +25,32 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 <BlogLayout title={post.data.title} description={post.data.description} publishedTime={post.data.date} tags={post.data.tags}>
-  <article class="post">
-    <header class="post-header">
-      <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
-      {postIsDraft(post) && <span class="draft-label">초안</span>}
-      <h1>{post.data.title}</h1>
-      <p class="post-description">{post.data.description}</p>
+  <Fragment slot="hero">
+    {postIsDraft(post) && <span class="draft-label">초안</span>}
+    <h1>{post.data.title}</h1>
+    <p class="hero-description">{post.data.description}</p>
+    <dl class="post-meta">
+      <div>
+        <dt>작성일</dt>
+        <dd><time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time></dd>
+      </div>
+      <div>
+        <dt>읽는 시간</dt>
+        <dd>약 {postReadingMinutes(post)}분</dd>
+      </div>
       {post.data.tags.length > 0 && (
-        <ul class="tag-list" aria-label="태그">
-          {post.data.tags.map((tag) => <li><a href={tagUrl(tag)}>#{tag}</a></li>)}
-        </ul>
+        <div class="post-meta-tags">
+          <dt>태그</dt>
+          <dd>
+            <ul class="tag-list" aria-label="태그">
+              {post.data.tags.map((tag) => <li><a href={tagUrl(tag)}>#{tag}</a></li>)}
+            </ul>
+          </dd>
+        </div>
       )}
-    </header>
+    </dl>
+  </Fragment>
+  <article class="post">
     <div class="prose">
       <Content />
     </div>

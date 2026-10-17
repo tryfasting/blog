@@ -7,9 +7,9 @@ import { blogDescription, blogTitle } from '../blog/site';
 const posts = await getVisiblePosts();
 ---
 <BlogLayout title={blogTitle} description={blogDescription}>
-  <section class="page-intro">
+  <Fragment slot="hero">
     <h1>글 목록</h1>
-    <p>{blogDescription}</p>
-  </section>
+    <p class="hero-description">{blogDescription}</p>
+  </Fragment>
   <PostList posts={posts} />
 </BlogLayout>

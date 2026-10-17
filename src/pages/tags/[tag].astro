@@ -24,10 +24,10 @@ interface Props {
 const { label, posts } = Astro.props;
 ---
 <BlogLayout title={`#${label}`} description={`'${label}' 태그가 붙은 글 목록`}>
-  <section class="page-intro">
+  <Fragment slot="hero">
     <h1>#{label}</h1>
-    <p>{posts.length}개의 글</p>
-  </section>
+    <p class="hero-description">{posts.length}개의 글</p>
+  </Fragment>
   <PostList posts={posts} />
   <p class="back-link"><a href={withBase('/')}>← 전체 글 목록</a></p>
 </BlogLayout>

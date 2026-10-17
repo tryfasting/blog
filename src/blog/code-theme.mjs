@@ -1,5 +1,5 @@
 // Warm monochrome Shiki theme for blog code blocks.
-// Tokens differ by weight, style and gray level instead of hue; every color is >= 4.5:1 on #efeeeb.
+// Tokens differ by weight, style and gray level instead of hue; every color is >= 4.5:1 on #ece8de (the code block surface).
 const ink = '#121212';
 const graphite = '#373734';
 const muted = '#5f5d58';
@@ -8,7 +8,7 @@ export const warmMonochrome = {
   name: 'warm-monochrome',
   type: 'light',
   colors: {
-    'editor.background': '#efeeeb',
+    'editor.background': '#ece8de',
     'editor.foreground': ink,
   },
   tokenColors: [
