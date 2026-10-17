@@ -61,11 +61,11 @@ const toc = tocItems(headings);
         </ol>
       </nav>
     )}
-    <article class="post">
+    <article class="post" data-pagefind-body>
       <div class="prose">
         <Content />
       </div>
-      <p class="back-link"><a href={withBase('/')}>← 글 목록</a></p>
+      <p class="back-link" data-pagefind-ignore><a href={withBase('/')}>← 글 목록</a></p>
     </article>
   </div>
 </BlogLayout>

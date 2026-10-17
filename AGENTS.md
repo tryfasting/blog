@@ -36,11 +36,12 @@
    | `src/content.config.ts` | 글 컬렉션과 frontmatter 스키마. dev에서만 원고 검사를 통과한 `desk/` 원고를 포함 | 화면, URL |
    | `src/blog/desk.ts`, `scripts/desk-check.ts` | `desk/`를 훑어 원고 검사, `logs/desk-check.log` 기록 | 원고 수정, 빌드 중 실행 |
    | `src/blog/posts.ts` | 글 조회·정렬, draft 노출(페이지는 `getVisiblePosts`: dev에서만 draft 포함, RSS는 `getPublishedPosts`: 항상 제외), 페이지가 쓰는 helper의 단일 진입점(`lib` 함수를 Astro 값과 연결, 예: `withBase`) | 마크업, 스타일, 순수 계산 로직 |
-   | `src/blog/lib/*.ts` | Astro 없이 도는 순수 계산(`slug.ts` slug·태그 slug·slug 검사, `url.ts` 주소 조립, `date.ts` 날짜 표기, `draft.ts` draft 판정, `manuscript.ts` 원고 검사, `reading.ts` 읽는 시간, `toc.ts` 목차 항목). 단위 테스트 대상 | `astro:*`·`import.meta.env` 사용, 페이지에서 직접 import |
+   | `src/blog/lib/*.ts` | Astro 없이 도는 순수 계산(`slug.ts` slug·태그 slug·slug 검사, `url.ts` 주소 조립, `date.ts` 날짜 표기, `draft.ts` draft 판정, `manuscript.ts` 원고 검사, `reading.ts` 읽는 시간, `toc.ts` 목차 항목, `tags.ts` 태그별 글 수). 단위 테스트 대상 | `astro:*`·`import.meta.env` 사용, 페이지에서 직접 import |
    | `tests/*.test.ts` | `lib` 단위 테스트(`npm test`, Node 내장 `node:test`) | Astro 런타임 의존 |
    | `tests/build-guards.test.mjs` | 빌드가 거부하거나(실패와 오류 문구) 빼야 하는(draft) 글을 임시로 만들어 `astro build`로 확인(`npm run test:build`) | `dist/` 덮어쓰기, 실행 뒤 임시 파일 남기기 |
    | `src/blog/site.ts` | 사이트 이름·설명 같은 상수 | 로직 |
    | `src/blog/BlogLayout.astro`, `PostList.astro` | 페이지 뼈대(머리 띠: 머리말 + 이름 있는 slot `hero`로 받는 제목 구역)와 목록 마크업 | 컬렉션 직접 조회 |
+   | `public/search.js` | 검색 패널과 Pagefind 호출(사이트의 유일한 클라이언트 JS) | 외부 서비스 호출, 추적 |
    | `src/blog/blog.css`, `code-theme.mjs` | 모든 스타일과 코드 하이라이트 | 페이지별 인라인 스타일 |
    | `src/pages/*` | 위 모듈을 조합한 라우트 | `getCollection` 직접 호출, `/blog/`·`/` 경로 하드코딩 |
 

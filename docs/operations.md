@@ -10,8 +10,8 @@
 
 - **목적**: 개발하며 배운 내용을 기록·공개한다. 장기적으로 채용 담당자·면접관에게 보여 줄 수 있는 기록이 된다.
 - **운영 원칙**: 간단하고 손이 덜 가며, 글 쓰고 올리기 쉽고, 오래 유지할 수 있을 것. 편집기는 Obsidian과 VS Code 어느 쪽이든 쓸 수 있어야 한다.
-- **현재 범위**: 글 목록(최신순), 글 상세(읽는 시간, 넓은 화면의 목차), 태그별 목록, RSS, sitemap, 메타·OG 태그, 포트폴리오 링크.
-- **하지 않기로 한 것**(나중에 다시 검토): 댓글, 사이트 내 검색, 시리즈·카테고리, 조회수·애널리틱스, 다크모드.
+- **현재 범위**: 글 목록(최신순), 글 상세(읽는 시간, 넓은 화면의 목차), 태그별 목록, 태그 모음(`/blog/tags/`), 검색(머리말의 돋보기), RSS, sitemap, 메타·OG 태그, 포트폴리오 링크.
+- **하지 않기로 한 것**(나중에 다시 검토): 댓글, 시리즈·카테고리(분류는 태그만), 조회수·애널리틱스, 다크모드.
 
 ## 구조
 
@@ -22,6 +22,7 @@
 | `docs/post-template.md` | 원고 frontmatter 템플릿 |
 | `logs/` | 로컬 기록 (`desk-check.log` 등, Git 제외) |
 | `src/content.config.ts` | 컬렉션 정의, frontmatter 스키마, dev에서 원고 포함 |
+| `public/search.js` | 검색 패널(돋보기). 번들러를 거치지 않는 정적 파일 |
 | `src/blog/desk.ts`, `scripts/desk-check.ts` | `desk/` 원고 검사와 로그 (`npm run desk:check`) |
 | `src/blog/` | 레이아웃·컴포넌트·CSS·helper (`posts.ts`의 `withBase`로 모든 내부 링크에 `/blog`를 붙임) |
 | `src/blog/lib/` | Astro 없이 도는 순수 함수(slug 계산·검사, 원고 검사, 주소 조립, 날짜 표기). 페이지는 `posts.ts`를 거쳐 쓴다 |
@@ -36,7 +37,9 @@
 
 - 색·글꼴·크기와 그 근거, 결정 이력은 로컬 전용 `DESIGN.md` 앞부분("블로그 디자인 기준")에 있다. refero에서 가져온 참고 원문이 같은 파일에 있어 커밋하지 않는다. 값의 실제 원본은 `src/blog/blog.css`와 `src/blog/code-theme.mjs`다.
 - 지켜야 할 핵심 규칙
-  - 라이트 전용이며 클라이언트 JavaScript는 쓰지 않는다.
+  - 라이트 전용이다.
+  - 클라이언트 JavaScript는 기능에 꼭 필요한 곳에만, 빌드 결과물로 정적 제공하고 외부 서비스·추적 코드는 쓰지 않는다(2026-10-17 사용자 결정). 지금은 검색(`public/search.js` + Pagefind)뿐이다.
+  - 검색: `npm run build`가 Astro 빌드 뒤 `pagefind --site dist`로 색인을 만든다. 글 페이지의 본문(`data-pagefind-body`)만 색인한다. 그래서 `npm run dev`에서는 검색이 동작하지 않고 `npm run preview`와 운영 사이트에서 동작한다.
   - 배치: 위쪽 머리 띠(`--color-band`)에 머리말과 페이지 제목 구역(글은 제목·요약·작성일·읽는 시간·태그)을 두고, 그 아래 본문은 더 밝은 면(`--color-canvas`)에 둔다. 페이지는 `BlogLayout`의 `hero` slot으로 제목 구역을 넘긴다.
   - 글 본문은 데스크톱 17px·모바일 16px, 행간 1.7, 가독폭 680px.
   - 작은 글자를 포함해 모든 글자는 배경 대비 4.5:1 이상. 주황(`--color-accent-mark`)은 장식에만 쓰고 글자·버튼에는 쓰지 않는다.

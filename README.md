@@ -35,7 +35,6 @@
 
 - 글은 **작성 폴더** `desk/`(Git 제외, 내 PC에만 있음)에서 Obsidian으로 자유롭게 쓴다.
 - **등록 도구**(Python + tkinter 창, `uv run`으로 실행)에서 원고를 고르면, 규칙 검사 → `posts/`로 옮기기 → 빌드·화면 검증 → 커밋·push → 배포 확인까지 자동으로 하고, 다 되면 올라간 글을 브라우저로 열어 준다. 모든 단계는 로그로 남는다.
-- 사이트에 **검색**(돋보기)이 생긴다.
 
 ---
 
@@ -85,7 +84,8 @@ push하면 GitHub Actions가 `npm test` → `check` → `build`를 다시 돌리
   /blog/tags/<태그>/  태그 페이지     그 태그가 붙은 글
   /blog/404.html      404 페이지
   /blog/rss.xml 등    피드            사람이 아니라 프로그램이 읽는 파일
-  (예정) 검색, 태그 모음
+  /blog/tags/         태그 모음       모든 태그와 글 수
+  (돋보기)            검색            머리말의 돋보기로 여는 검색 패널
 
 모든 페이지의 공통 뼈대
   ┌─ 머리 띠 ─────────────────────────────┐
@@ -122,8 +122,8 @@ push하면 GitHub Actions가 `npm test` → `check` → `build`를 다시 돌리
 | 태그 페이지 | `/blog/tags/<태그>/` | `src/pages/tags/[tag].astro` |
 | 404 페이지 | 없는 주소 | `src/pages/404.astro` |
 | 피드 | `/blog/rss.xml`, `/blog/sitemap-index.xml` | `src/pages/rss.xml.ts`, sitemap 통합 |
-| 검색 (예정) | 정하는 중 | |
-| 태그 모음 (예정) | 정하는 중 | |
+| 태그 모음 | `/blog/tags/` | `src/pages/tags/index.astro` |
+| 검색 | 머리말의 돋보기(페이지 아님) | `public/search.js`, 색인은 `npm run build`의 Pagefind |
 
 **화면 구역** (모든 페이지 공통, 코드는 `src/blog/BlogLayout.astro`, `src/blog/blog.css`)
 
