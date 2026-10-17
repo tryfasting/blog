@@ -91,9 +91,11 @@ class Undo:
             else:
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(content)
-        for path in sorted({p.parent for p in self.previous}, key=lambda p: len(p.parts), reverse=True):
-            if path.exists() and path.is_dir() and not any(path.iterdir()) and "images" in path.parts:
-                path.rmdir()
+        # Folders this run created for images (posts/images/<slug>/, maybe posts/images/) go too once empty.
+        for folder in {p.parent for p in self.previous}:
+            while "images" in folder.parts and folder.is_dir() and not any(folder.iterdir()):
+                folder.rmdir()
+                folder = folder.parent
 
 
 class Run:
