@@ -38,6 +38,8 @@
    | `src/blog/posts.ts` | 글 조회·정렬, draft 노출(페이지는 `getVisiblePosts`: dev에서만 draft 포함, RSS는 `getPublishedPosts`: 항상 제외), 페이지가 쓰는 helper의 단일 진입점(`lib` 함수를 Astro 값과 연결, 예: `withBase`) | 마크업, 스타일, 순수 계산 로직 |
    | `src/blog/lib/*.ts` | Astro 없이 도는 순수 계산(`slug.ts` slug·태그 slug·slug 검사, `url.ts` 주소 조립, `date.ts` 날짜 표기, `draft.ts` draft 판정, `manuscript.ts` 원고 검사, `reading.ts` 읽는 시간, `toc.ts` 목차 항목, `tags.ts` 태그별 글 수). 단위 테스트 대상 | `astro:*`·`import.meta.env` 사용, 페이지에서 직접 import |
    | `tests/*.test.ts` | `lib` 단위 테스트(`npm test`, Node 내장 `node:test`) | Astro 런타임 의존 |
+   | `scripts/blog_publish/rules.py` | 등록 규칙의 순수 계산(배치 경로·이미지 링크, 커밋 메시지, 로그 이름). pytest 대상(`tests/python/`) | 파일·git·네트워크 접근 |
+   | `scripts/blog_publish/pipeline.py`, `gui.py`, `scripts/publish.py`, `publish.cmd` | 등록 구간 실행(단계·로그·원상복구·Actions·운영 확인)과 창·터미널 명령. 원고 규칙은 `desk:check`를 불러 쓴다 | 원고 규칙 재구현, 글 내용 수정 |
    | `tests/build-guards.test.mjs` | 빌드가 거부하거나(실패와 오류 문구) 빼야 하는(draft) 글을 임시로 만들어 `astro build`로 확인(`npm run test:build`) | `dist/` 덮어쓰기, 실행 뒤 임시 파일 남기기 |
    | `src/blog/site.ts` | 사이트 이름·설명 같은 상수 | 로직 |
    | `src/blog/BlogLayout.astro`, `PostList.astro` | 페이지 뼈대(머리 띠: 머리말 + 이름 있는 slot `hero`로 받는 제목 구역)와 목록 마크업 | 컬렉션 직접 조회 |
@@ -60,6 +62,6 @@
 
 1. **작업 전 완료 기준 표**: 작업을 시작하기 전에 `| # | 완료 기준 | 확인 방법 |` 표를 사용자에게 먼저 보여 준다. 확인 방법은 실행할 명령이나 비교 대상처럼 구체적으로 쓴다.
 2. **검증 실행과 보고**: 작업 후 기준마다 검증을 실제로 실행하고, 기준 번호별로 결과(통과·실패와 근거가 되는 출력)를 보고한다. 실패했거나 확인하지 못한 기준은 숨기지 않고 그대로 적는다.
-   - 기본 명령: `npm test`, `npm run check`, `npm run build`, `npm run preview` 후 `npm run verify`
+   - 기본 명령: `npm test`, `npm run check`, `npm run build`, `npm run preview` 후 `npm run verify`. 등록 도구를 바꿨다면 `npm run test:py`.
 3. **스크린샷은 디자인(화면)이 바뀔 때만**: `npm run verify`가 만든 스크린샷(기본 `artifacts/verify/`, Git 제외) 가운데 바뀐 화면만 에이전트가 먼저 열어 확인한 뒤 1440px·375px로 사용자에게 보여 준다. 스크린샷 생성 시각과 대상 커밋을 함께 적는다. 화면이 바뀌지 않는 코드 변경은 `verify` 통과로 충분하다.
 4. push 뒤에는 Actions 성공과 운영 주소(`npm run verify -- https://tryfasting.github.io <출력 폴더>`)도 확인한다.

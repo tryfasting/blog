@@ -23,10 +23,11 @@
 | `logs/` | 로컬 기록 (`desk-check.log` 등, Git 제외) |
 | `src/content.config.ts` | 컬렉션 정의, frontmatter 스키마, dev에서 원고 포함 |
 | `public/search.js` | 검색 패널(돋보기). 번들러를 거치지 않는 정적 파일 |
+| `publish.cmd`, `scripts/publish.py`, `scripts/blog_publish/` | 등록 도구(창과 터미널 명령). Python 표준 라이브러리, `uv run`으로 실행 |
 | `src/blog/desk.ts`, `scripts/desk-check.ts` | `desk/` 원고 검사와 로그 (`npm run desk:check`) |
 | `src/blog/` | 레이아웃·컴포넌트·CSS·helper (`posts.ts`의 `withBase`로 모든 내부 링크에 `/blog`를 붙임) |
 | `src/blog/lib/` | Astro 없이 도는 순수 함수(slug 계산·검사, 원고 검사, 주소 조립, 날짜 표기). 페이지는 `posts.ts`를 거쳐 쓴다 |
-| `tests/` | `lib` 단위 테스트(`npm test`), 빌드가 실패해야 하는 경우 검사(`npm run test:build`, 느림) |
+| `tests/` | `lib` 단위 테스트(`npm test`), 등록 도구 규칙(`npm run test:py`, pytest), 빌드가 실패해야 하는 경우 검사(`npm run test:build`, 느림) |
 | `src/pages/` | 라우트: `index`(목록), `[slug]`(글), `tags/[tag]`, `rss.xml`, `404` |
 | `astro.config.mjs` | `base: '/blog'` (주소가 `/blog/` 아래인 이유) |
 | `scripts/verify-blog.cjs` | 화면 검증과 스크린샷 (`npm run verify -- [기본 URL] [출력 폴더] [--dev]`, 기본 출력 `artifacts/verify/`, Git 제외. `--dev`는 dev 서버용으로 sitemap 검사만 건너뜀) |
@@ -82,9 +83,25 @@
 - 원고 검사는 dev를 시작할 때 한 번 한다. 원고 파일을 새로 만들었거나 제외됐던 원고를 고쳤다면 dev를 다시 시작한다.
 - 원고와 `draft: true`인 글은 RSS와 `npm run build` 결과물에 들어가지 않는다. Astro 7의 dev 서버는 뒤에서 계속 돌므로 다 보면 `npx astro dev stop`으로 끈다.
 
-### 등록
+### 등록 (등록 도구)
 
-- 원고를 `posts/` 바로 아래로 옮기고 커밋·push한다. (등록 도구가 생기면 이 과정을 자동으로 한다.)
+저장소 루트의 `publish.cmd`를 더블클릭하면 창이 열린다(터미널에서는 `uv run scripts/publish.py`). 원고를 고르고 **등록**을 누르면 아래 단계를 차례로 실행한다. 전 과정이 코드로만 돈다(LLM 없음).
+
+| 단계 | 하는 일 |
+|---|---|
+| 사전 점검(preflight) | `main` 브랜치인지, 커밋하지 않은 변경이 없는지, `posts/`가 깨끗한지, 원격과 같은 상태인지, `node_modules`가 있는지 |
+| 원고 검사(validate) | `npm run desk:check`와 같은 규칙. 이미 등록된 원고면 갱신할지 묻는다 |
+| 배치(place) | 원고를 `posts/<파일명>`으로, 이미지를 `posts/images/<slug>/`로 복사하고 등록된 사본의 이미지 경로만 바꾼다. `desk/` 원본은 그대로 둔다 |
+| 빌드(build) | `npm run build` |
+| 커밋(commit) | `posts/` 변경만 커밋. 메시지는 `post: <slug>`, 갱신은 `post: update <slug>` |
+| push | `git push origin main` |
+| Actions | GitHub Actions가 끝날 때까지 기다린다. 실패하면 실행 주소와 실패한 단계를 보여 준다 |
+| 운영 확인(live) | 새 글 주소가 200이 되고 RSS에 들어가면 브라우저로 연다 |
+
+- push 전에 실패하면 이번 실행이 바꾼 파일과 커밋을 모두 되돌린다. 직접 고친 내용은 건드리지 않는다. push 뒤에 실패하면 사이트는 마지막 성공 배포 상태로 남는다.
+- 실행 기록: `logs/publish/<시각>_<slug>.log`(단계마다 시작·끝·소요 시간·명령·종료 코드·출력)와 `logs/publish/summary.jsonl`(실행마다 한 줄). 최근 50개만 남긴다. 창의 **로그 열기**로 연다.
+- 터미널 명령: `uv run scripts/publish.py list`, `preview <원고>`, `publish <원고>`, `remove <slug>`(등록된 글 내리기). `--yes`는 확인 질문을 건너뛰고, `--no-browser`는 브라우저를 열지 않는다.
+- 이미 등록한 원고(`posts/`에 같은 파일 이름이 있음)는 목록에 "등록됨"으로 나오고, 미리보기에는 등록된 글이 보인다.
 
 ### push 전 확인 (선택)
 
