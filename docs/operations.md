@@ -19,14 +19,14 @@
 |---|---|
 | `posts/` | 글 (Obsidian 볼트로 여는 폴더) |
 | `posts/_templates/` | Obsidian 기본 Templates용 템플릿 (빌드 제외) |
-| `posts/_drafts/` | 공개 전 초안 (Git 제외, 빌드 제외) |
+| `posts/_drafts/` | 공개 전 초안 (Git 제외, 빌드 제외, `npm run dev`에서만 보임) |
 | `src/content.config.ts` | 컬렉션 정의, frontmatter 스키마 |
 | `src/blog/` | 레이아웃·컴포넌트·CSS·helper (`posts.ts`의 `withBase`로 모든 내부 링크에 `/blog`를 붙임) |
 | `src/blog/lib/` | Astro 없이 도는 순수 함수(slug 계산·검사, 주소 조립, 날짜 표기). 페이지는 `posts.ts`를 거쳐 쓴다 |
 | `tests/` | `lib` 단위 테스트(`npm test`), 빌드가 실패해야 하는 경우 검사(`npm run test:build`, 느림) |
 | `src/pages/` | 라우트: `index`(목록), `[slug]`(글), `tags/[tag]`, `rss.xml`, `404` |
 | `astro.config.mjs` | `base: '/blog'` (주소가 `/blog/` 아래인 이유) |
-| `scripts/verify-blog.cjs` | 화면 검증과 스크린샷 (`npm run verify -- [기본 URL] [출력 폴더]`, 기본 출력 `artifacts/verify/`, Git 제외) |
+| `scripts/verify-blog.cjs` | 화면 검증과 스크린샷 (`npm run verify -- [기본 URL] [출력 폴더] [--dev]`, 기본 출력 `artifacts/verify/`, Git 제외. `--dev`는 dev 서버용으로 sitemap 검사만 건너뜀) |
 
 - 내부 링크는 반드시 `withBase()`로 만든다. `/blog/`를 직접 쓰거나 `/`로 시작하는 경로를 그대로 쓰지 않는다.
 
@@ -53,7 +53,7 @@
   date: 2026-10-16           # 필수
   description: 한두 문장 요약  # 필수 (목록·검색 미리보기·OG에 사용)
   tags: [astro, python]      # 선택, 기본값 []
-  draft: false               # 선택, 기본값 false. true면 빌드에서 제외
+  draft: false               # 선택, 기본값 false. true면 빌드에서 제외(dev에서는 "초안" 표시와 함께 보임)
   ---
   ```
 
@@ -81,6 +81,10 @@
 5. 저장 후 `main`에 push한다.
 
 공개 전 글은 `posts/_drafts/`에 두었다가 공개할 때 주제 폴더로 옮긴다.
+
+### 초안 미리보기
+
+`npm run dev`를 실행하고 `http://127.0.0.1:4321/blog/`를 연다. `posts/_drafts/`의 글과 `draft: true`인 글이 "초안" 표시와 함께 목록·태그·글 페이지에 보인다. RSS와 `npm run build` 결과물에는 들어가지 않는다. Astro 7의 dev 서버는 뒤에서 계속 돌므로 다 보면 `npx astro dev stop`으로 끈다.
 
 ### VS Code
 

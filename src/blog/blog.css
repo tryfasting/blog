@@ -148,6 +148,19 @@ a { color: inherit; }
 }
 .tag-list a:hover { color: var(--color-ink); background: var(--color-hairline); }
 
+/* Only `npm run dev` renders drafts. Outlined so it never reads as a clickable tag. */
+.draft-label {
+  display: inline-block;
+  margin-top: var(--space-8);
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  color: var(--color-graphite);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  line-height: 1.8;
+}
+
 /* Post header */
 .post-header { margin-bottom: var(--space-40); padding-bottom: var(--space-32); border-bottom: 1px solid var(--color-hairline); }
 .post-header h1 { margin-top: var(--space-8); }

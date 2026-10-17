@@ -1,4 +1,4 @@
-// Browser check of the blog: node scripts/verify-blog.cjs [origin] [outDir]
+// Browser check of the blog: node scripts/verify-blog.cjs [origin] [outDir] [--dev]
 // origin defaults to the local preview (http://127.0.0.1:4321); pass https://tryfasting.github.io for production.
 // Full-page screenshots of every checked page go to outDir (default artifacts/verify, git-ignored).
 const fs = require('node:fs');
@@ -6,8 +6,11 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 
-const origin = (process.argv[2] ?? 'http://127.0.0.1:4321').replace(/\/$/, '');
-const output = process.argv[3] ?? 'artifacts/verify';
+// `--dev` checks `npm run dev` (drafts visible), which has no sitemap: it is generated at build time.
+const dev = process.argv.includes('--dev');
+const [originArg, outputArg] = process.argv.slice(2).filter((arg) => arg !== '--dev');
+const origin = (originArg ?? 'http://127.0.0.1:4321').replace(/\/$/, '');
+const output = outputArg ?? 'artifacts/verify';
 const home = `${origin}/blog/`;
 
 /** '/blog/' -> 'index', '/blog/tags/astro/' -> 'tags-astro' */
@@ -64,7 +67,7 @@ function shotName(url, width) {
     }
 
     // Feeds and the not-found page.
-    for (const path of ['rss.xml', 'sitemap-index.xml']) {
+    for (const path of dev ? ['rss.xml'] : ['rss.xml', 'sitemap-index.xml']) {
       assert.equal((await page.goto(`${home}${path}`)).status(), 200, path);
     }
     assert.equal((await page.goto(`${home}no-such-post/`)).status(), 404);

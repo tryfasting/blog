@@ -1,5 +1,5 @@
 ---
-import { formatDate, isoDate, postUrl, tagUrl, type Post } from './posts';
+import { formatDate, isoDate, postIsDraft, postUrl, tagUrl, type Post } from './posts';
 
 interface Props {
   posts: Post[];
@@ -13,6 +13,7 @@ const { posts } = Astro.props;
     {posts.map((post) => (
       <li class="post-item">
         <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        {postIsDraft(post) && <span class="draft-label">초안</span>}
         <h2><a href={postUrl(post)}>{post.data.title}</a></h2>
         <p>{post.data.description}</p>
         {post.data.tags.length > 0 && (

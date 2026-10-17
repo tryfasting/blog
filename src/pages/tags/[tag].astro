@@ -1,10 +1,10 @@
 ---
 import BlogLayout from '../../blog/BlogLayout.astro';
 import PostList from '../../blog/PostList.astro';
-import { getPublishedPosts, tagSlug, withBase, type Post } from '../../blog/posts';
+import { getVisiblePosts, tagSlug, withBase, type Post } from '../../blog/posts';
 
 export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
+  const posts = await getVisiblePosts();
   const byTag = new Map<string, { label: string; posts: Post[] }>();
   for (const post of posts) {
     for (const tag of post.data.tags) {

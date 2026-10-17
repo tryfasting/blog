@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { isDraft, isVisible } from './lib/draft.ts';
 import { findSlugProblems, slugFromId, tagSlug } from './lib/slug.ts';
 import { joinBase } from './lib/url.ts';
 
@@ -23,14 +24,27 @@ function assertValidSlugs(posts: Post[]): void {
   if (problems.length > 0) throw new Error(`Blog post slug check failed:\n${problems.join('\n')}`);
 }
 
-/** Published posts, newest first. Drafts are excluded everywhere (lists, pages, RSS, sitemap). */
-export async function getPublishedPosts(): Promise<Post[]> {
+export function postIsDraft(post: Post): boolean {
+  return isDraft({ id: post.id, draft: post.data.draft });
+}
+
+async function getPosts(includeDrafts: boolean): Promise<Post[]> {
   const all = await getCollection('posts');
   // Check drafts too, so publishing a draft can never introduce a duplicate URL.
   assertValidSlugs(all);
   return all
-    .filter((post) => !post.data.draft)
+    .filter((post) => isVisible({ id: post.id, draft: post.data.draft }, { includeDrafts }))
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || postSlug(a).localeCompare(postSlug(b)));
+}
+
+/** Posts for pages, newest first. `npm run dev` also shows drafts (marked 초안); builds never do. */
+export function getVisiblePosts(): Promise<Post[]> {
+  return getPosts(import.meta.env.DEV);
+}
+
+/** Published posts only, newest first, even in dev. For feeds such as RSS. */
+export function getPublishedPosts(): Promise<Post[]> {
+  return getPosts(false);
 }
 
 /** Prefixes a site-internal path with the configured base (`/blog`): withBase('/') === '/blog/'. */

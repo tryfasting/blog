@@ -1,10 +1,10 @@
 ---
 import { render } from 'astro:content';
 import BlogLayout from '../blog/BlogLayout.astro';
-import { formatDate, getPublishedPosts, isoDate, postSlug, tagUrl, withBase, type Post } from '../blog/posts';
+import { formatDate, getVisiblePosts, isoDate, postIsDraft, postSlug, tagUrl, withBase, type Post } from '../blog/posts';
 
 export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
+  const posts = await getVisiblePosts();
   return posts.map((post) => ({ params: { slug: postSlug(post) }, props: { post } }));
 }
 
@@ -18,6 +18,7 @@ const { Content } = await render(post);
   <article class="post">
     <header class="post-header">
       <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+      {postIsDraft(post) && <span class="draft-label">초안</span>}
       <h1>{post.data.title}</h1>
       <p class="post-description">{post.data.description}</p>
       {post.data.tags.length > 0 && (
