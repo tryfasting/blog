@@ -80,6 +80,9 @@ function shotName(url, width) {
       }
     }
 
+    // Search panel (needs the Pagefind index from `npm run build`, so not on the dev server).
+    const search = dev ? null : await checkSearch(page, home, output);
+
     // Feeds and the not-found page.
     for (const path of dev ? ['rss.xml'] : ['rss.xml', 'sitemap-index.xml']) {
       assert.equal((await page.goto(`${home}${path}`)).status(), 200, path);
@@ -89,9 +92,9 @@ function shotName(url, width) {
     assert.deepEqual(errors, []);
     fs.writeFileSync(
       path.join(output, 'meta.json'),
-      JSON.stringify({ passed: true, capturedAt: new Date().toISOString(), origin, results }, null, 2),
+      JSON.stringify({ passed: true, capturedAt: new Date().toISOString(), origin, results, search }, null, 2),
     );
-    console.log(JSON.stringify({ passed: true, pages: pages.length, checks: results.length, screenshots: output }));
+    console.log(JSON.stringify({ passed: true, pages: pages.length, checks: results.length, search, screenshots: output }));
   } finally {
     await browser.close();
   }
@@ -99,3 +102,68 @@ function shotName(url, width) {
   console.error(error);
   process.exitCode = 1;
 });
+
+/** Runs in the page: opens the panel, types `term`, and times the panel opening and the first results. */
+async function measureSearch(term) {
+  const button = document.querySelector('.search-btn');
+  const panel = document.getElementById('search-panel');
+  const input = panel.querySelector('input');
+  const list = panel.querySelector('.search-results');
+  const t0 = performance.now();
+  button.click();
+  await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+  const openMs = performance.now() - t0;
+  const t1 = performance.now();
+  input.value = term;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise((resolve, reject) => {
+    const observer = new MutationObserver(() => list.children.length && (observer.disconnect(), resolve()));
+    observer.observe(list, { childList: true });
+    setTimeout(() => reject(new Error(`no search results for "${term}" within 5s`)), 5000);
+  });
+  return {
+    openMs: Math.round(openMs),
+    firstResultMs: Math.round(performance.now() - t1),
+    count: list.children.length,
+    firstHref: list.querySelector('a').getAttribute('href'),
+    focused: document.activeElement === input,
+  };
+}
+
+async function checkSearch(page, home, output) {
+  const timings = {};
+  for (const width of [1440, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(home, { waitUntil: 'networkidle' });
+    // A word from the newest post's title, so the query always has a match.
+    const term = await page.$eval('.post-item h2 a', (a) => a.textContent.trim().split(/\s+/)[0]);
+    // Cold: Pagefind has not been downloaded yet, so this includes the download.
+    const cold = await page.evaluate(measureSearch, term);
+    assert(cold.focused, 'opening search should focus the input');
+    assert(cold.firstHref.startsWith('/blog/'), `search result outside /blog/: ${cold.firstHref}`);
+    await page.screenshot({ path: path.join(output, `search-open-${width}.png`) });
+    await page.keyboard.press('Escape');
+    const closed = await page.evaluate(() => ({
+      hidden: document.getElementById('search-panel').hidden,
+      focusBack: document.activeElement?.classList.contains('search-btn') ?? false,
+    }));
+    assert(closed.hidden && closed.focusBack, 'Esc should close search and return focus to the magnifier');
+    timings[`cold${width}`] = cold;
+  }
+  // Warm: a visitor points at the magnifier first, which starts the download early.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(home, { waitUntil: 'networkidle' });
+  const term = await page.$eval('.post-item h2 a', (a) => a.textContent.trim().split(/\s+/)[0]);
+  await page.hover('.search-btn');
+  await page.waitForTimeout(800);
+  timings.warm1440 = await page.evaluate(measureSearch, term);
+  // Keyboard: Tab to the magnifier and open it with Enter.
+  await page.keyboard.press('Escape');
+  await page.focus('.search-btn');
+  await page.keyboard.press('Enter');
+  assert.equal(await page.evaluate(() => document.getElementById('search-panel').hidden), false, 'Enter on the magnifier should open search');
+  await page.keyboard.press('Escape');
+  // The first result is a real page.
+  assert.equal((await page.goto(new URL(timings.warm1440.firstHref, home).href)).status(), 200, 'search result link');
+  return timings;
+}
