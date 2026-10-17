@@ -47,9 +47,14 @@ function shotName(url, width) {
         // Astro marks Markdown images loading="lazy", so images below the fold would count as broken
         // (and be blank in the full-page screenshot) unless they are loaded first.
         await page.evaluate(() =>
-          Promise.all([...document.images].map((image) => {
+          Promise.all([...document.images].map(async (image) => {
             image.loading = 'eager';
-            return image.decode().catch(() => {});
+            if (image.complete) return;
+            // Wait for the request itself; decode() can reject while a lazy load is still starting.
+            await new Promise((resolve) => {
+              image.addEventListener('load', resolve, { once: true });
+              image.addEventListener('error', resolve, { once: true });
+            });
           })),
         );
         const result = await page.evaluate(() => ({
