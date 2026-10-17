@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+
+# Obsidian vault settings and unpublished drafts
+.obsidian/
+posts/_drafts/

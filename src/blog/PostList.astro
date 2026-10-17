@@ -1,0 +1,26 @@
+---
+import { formatDate, isoDate, postUrl, tagUrl, type Post } from './posts';
+
+interface Props {
+  posts: Post[];
+}
+const { posts } = Astro.props;
+---
+{posts.length === 0 ? (
+  <p class="empty">아직 글이 없습니다.</p>
+) : (
+  <ol class="post-list">
+    {posts.map((post) => (
+      <li class="post-item">
+        <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        <h2><a href={postUrl(post)}>{post.data.title}</a></h2>
+        <p>{post.data.description}</p>
+        {post.data.tags.length > 0 && (
+          <ul class="tag-list" aria-label="태그">
+            {post.data.tags.map((tag) => <li><a href={tagUrl(tag)}>#{tag}</a></li>)}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ol>
+)}

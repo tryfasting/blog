@@ -1,0 +1,11 @@
+---
+import BlogLayout from '../blog/BlogLayout.astro';
+import { withBase } from '../blog/posts';
+---
+<BlogLayout title="페이지를 찾을 수 없습니다" description="요청한 글이나 페이지가 없습니다.">
+  <section class="page-intro">
+    <h1>페이지를 찾을 수 없습니다</h1>
+    <p>주소를 확인하거나 글 목록으로 이동해 주세요.</p>
+  </section>
+  <p class="back-link"><a href={withBase('/')}>← 글 목록</a></p>
+</BlogLayout>

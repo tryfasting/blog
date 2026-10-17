@@ -1,0 +1,34 @@
+---
+import { render } from 'astro:content';
+import BlogLayout from '../blog/BlogLayout.astro';
+import { formatDate, getPublishedPosts, isoDate, postSlug, tagUrl, withBase, type Post } from '../blog/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({ params: { slug: postSlug(post) }, props: { post } }));
+}
+
+interface Props {
+  post: Post;
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<BlogLayout title={post.data.title} description={post.data.description} publishedTime={post.data.date} tags={post.data.tags}>
+  <article class="post">
+    <header class="post-header">
+      <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+      <h1>{post.data.title}</h1>
+      <p class="post-description">{post.data.description}</p>
+      {post.data.tags.length > 0 && (
+        <ul class="tag-list" aria-label="태그">
+          {post.data.tags.map((tag) => <li><a href={tagUrl(tag)}>#{tag}</a></li>)}
+        </ul>
+      )}
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+  <p class="back-link"><a href={withBase('/')}>← 글 목록</a></p>
+</BlogLayout>

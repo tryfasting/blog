@@ -1,0 +1,33 @@
+---
+import BlogLayout from '../../blog/BlogLayout.astro';
+import PostList from '../../blog/PostList.astro';
+import { getPublishedPosts, tagSlug, withBase, type Post } from '../../blog/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const byTag = new Map<string, { label: string; posts: Post[] }>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      const key = tagSlug(tag);
+      const group = byTag.get(key) ?? { label: tag, posts: [] };
+      group.posts.push(post);
+      byTag.set(key, group);
+    }
+  }
+  return [...byTag].map(([tag, group]) => ({ params: { tag }, props: group }));
+}
+
+interface Props {
+  label: string;
+  posts: Post[];
+}
+const { label, posts } = Astro.props;
+---
+<BlogLayout title={`#${label}`} description={`'${label}' 태그가 붙은 글 목록`}>
+  <section class="page-intro">
+    <h1>#{label}</h1>
+    <p>{posts.length}개의 글</p>
+  </section>
+  <PostList posts={posts} />
+  <p class="back-link"><a href={withBase('/')}>← 전체 글 목록</a></p>
+</BlogLayout>

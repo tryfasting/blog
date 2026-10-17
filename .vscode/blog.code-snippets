@@ -1,0 +1,20 @@
+{
+  // Blog post frontmatter. In a .md file: Ctrl+Shift+P → "Insert Snippet" → "Blog post",
+  // or type "post" and press Ctrl+Space. Save the file as posts/YYYY-MM-DD-lowercase-kebab-case.md.
+  "Blog post": {
+    "scope": "markdown",
+    "prefix": "post",
+    "description": "Blog post frontmatter (title, date, description, tags, draft)",
+    "body": [
+      "---",
+      "title: ${1:글 제목}",
+      "date: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      "description: ${2:한두 문장 요약}",
+      "tags: [${3}]",
+      "draft: false",
+      "---",
+      "",
+      "$0"
+    ]
+  }
+}

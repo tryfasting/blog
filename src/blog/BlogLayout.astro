@@ -1,0 +1,67 @@
+---
+import 'pretendard/dist/web/variable/pretendardvariable.css';
+import '@fontsource-variable/source-serif-4/wght.css';
+import '@fontsource/noto-serif-kr/400.css';
+import './blog.css';
+import { authorName, blogTitle } from './site';
+import { withBase } from './posts';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Set on post pages to emit article metadata. */
+  publishedTime?: Date;
+  tags?: string[];
+}
+const { title, description, publishedTime, tags = [] } = Astro.props;
+const pageTitle = title === blogTitle ? title : `${title} — ${blogTitle}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://tryfasting.github.io');
+const home = withBase('/');
+const rssUrl = new URL(withBase('/rss.xml'), Astro.site ?? 'https://tryfasting.github.io');
+const isList = Astro.url.pathname === home;
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="author" content={authorName} />
+    <meta name="theme-color" content="#f8f8f6" />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="alternate" type="application/rss+xml" title={blogTitle} href={rssUrl.href} />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <meta property="og:type" content={publishedTime ? 'article' : 'website'} />
+    <meta property="og:site_name" content={blogTitle} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:locale" content="ko_KR" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로 건너뛰기</a>
+    <header class="blog-header">
+      <a class="blog-home" href={home}>{blogTitle}</a>
+      <nav aria-label="블로그 메뉴">
+        <a href={home} aria-current={isList ? 'page' : undefined}>글 목록</a>
+        {/* The portfolio is a separate site on the same domain, so no base prefix. */}
+        <a href="/general/">포트폴리오</a>
+      </nav>
+    </header>
+    <main id="main" class="blog-main">
+      <slot />
+    </main>
+    <footer class="blog-footer">
+      <div class="blog-footer-inner">
+        <nav aria-label="바깥 링크">
+          <a href={rssUrl.pathname}>RSS</a>
+          <a href="https://github.com/tryfasting" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        </nav>
+        <p>© {new Date().getFullYear()} {authorName}</p>
+      </div>
+    </footer>
+  </body>
+</html>

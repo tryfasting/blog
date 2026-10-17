@@ -1,0 +1,15 @@
+---
+import BlogLayout from '../blog/BlogLayout.astro';
+import PostList from '../blog/PostList.astro';
+import { getPublishedPosts } from '../blog/posts';
+import { blogDescription, blogTitle } from '../blog/site';
+
+const posts = await getPublishedPosts();
+---
+<BlogLayout title={blogTitle} description={blogDescription}>
+  <section class="page-intro">
+    <h1>글 목록</h1>
+    <p>{blogDescription}</p>
+  </section>
+  <PostList posts={posts} />
+</BlogLayout>
