@@ -70,7 +70,9 @@ class PublishWindow:
             label.pack(side="left")
             self.step_labels[name] = label
 
-        self.log = tk.Text(top, height=14, wrap="word", state="disabled")
+        # Tk's default fixed font has no Hangul and falls back to a rough bitmap font on Windows.
+        log_font = ("Malgun Gothic", 10) if os.name == "nt" else None
+        self.log = tk.Text(top, height=14, wrap="word", state="disabled", font=log_font)
         self.log.pack(fill="both", expand=True)
 
         self.refresh()
