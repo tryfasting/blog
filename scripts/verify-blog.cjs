@@ -36,7 +36,7 @@ function shotName(url, width) {
     const postLinks = await page.$$eval('.post-item h2 a', (links) => links.map((a) => a.href));
     const tagLinks = await page.$$eval('.tag-list a', (links) => [...new Set(links.map((a) => a.href))]);
     assert(postLinks.length > 0, 'the list shows no posts');
-    const moreLinks = await page.$eval('.more-tags a', (links) => links.map((a) => a.href));
+    const moreLinks = await page.$$eval('.more-tags a', (links) => links.map((a) => a.href));
     const pages = [home, ...postLinks, ...tagLinks, ...moreLinks];
 
     for (const url of pages) {
