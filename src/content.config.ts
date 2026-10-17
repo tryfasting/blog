@@ -3,7 +3,7 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 // Posts live in the root `posts/` folder so they can be opened as an Obsidian vault.
-// Ids keep the folder path; URLs use a folder-independent slug (see src/blog/posts.ts).
+// Ids keep the folder path; URLs use a folder-independent slug (see src/blog/lib/slug.ts).
 const posts = defineCollection({
   loader: glob({
     base: './posts',

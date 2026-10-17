@@ -32,7 +32,7 @@
    |---|---|---|
    | `src/content.config.ts` | 글 컬렉션과 frontmatter 스키마 | 화면, URL |
    | `src/blog/posts.ts` | 글 조회·정렬·draft 제외, 페이지가 쓰는 helper의 단일 진입점(`lib` 함수를 Astro 값과 연결, 예: `withBase`) | 마크업, 스타일, 순수 계산 로직 |
-   | `src/blog/lib/*.ts` | Astro 없이 도는 순수 계산(`url.ts` 주소 조립, `date.ts` 날짜 표기). 단위 테스트 대상 | `astro:*`·`import.meta.env` 사용, 페이지에서 직접 import |
+   | `src/blog/lib/*.ts` | Astro 없이 도는 순수 계산(`slug.ts` slug·태그 slug·slug 검사, `url.ts` 주소 조립, `date.ts` 날짜 표기). 단위 테스트 대상 | `astro:*`·`import.meta.env` 사용, 페이지에서 직접 import |
    | `tests/*.test.ts` | `lib` 단위 테스트(`npm test`, Node 내장 `node:test`) | Astro 런타임 의존 |
    | `src/blog/site.ts` | 사이트 이름·설명 같은 상수 | 로직 |
    | `src/blog/BlogLayout.astro`, `PostList.astro` | 페이지 뼈대와 목록 마크업 | 컬렉션 직접 조회 |
