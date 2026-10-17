@@ -15,12 +15,12 @@
 ## 블로그 규칙
 
 - **이 저장소의 관심사는 "받은 MD 글을 정해진 디자인과 절차로 안정적으로 배포하는 것"뿐이다**(2026-10-17 사용자 지시). 글의 내용(주제, 문장, 제목, 요약)은 다루지 않는다. 글을 대신 쓰거나 다듬지 않고, 형식만 맞춘다.
-- 작업 전에 [운영 규칙](docs/operations.md)을 읽는다. 디자인 기준은 로컬 `DESIGN.md` 앞부분, 목표·진행 이력·다음 단계는 로컬 `.plans/BLOG_PLAN.md`에 있다(둘 다 커밋하지 않음). 새 문서를 만들기 전에 이 문서들을 고쳐 쓸 수 있는지 먼저 본다.
+- 작업 전에 [운영 규칙](docs/operations.md)을 읽는다. 디자인 기준은 로컬 `DESIGN.md` 앞부분, 목표·다음 단계는 로컬 `.plans/BLOG_PLAN.md`, 끝난 단계의 기록은 로컬 `.plans/BLOG_DONE.md`에 있다(모두 커밋하지 않음). 새 문서를 만들기 전에 이 문서들을 고쳐 쓸 수 있는지 먼저 본다.
 - 브랜치는 `main` 하나다. 글과 코드 모두 `main`에 push하면 배포된다.
 - 내부 링크는 `src/blog/posts.ts`의 `withBase()`로 만든다(`base: '/blog'`).
 - 상단 "포트폴리오" 링크는 다른 사이트이므로 `/general/`를 base 없이 쓴다.
 - 검증은 아래 "검증 루프"를 따른다.
-- 로컬 전용(커밋 금지): `DESIGN.md`(디자인 기준 + refero 참고 원본), `DESIGN-anthropic.md`(refero 참고 원본, 2026-10-17 추가), `.plans/`(작업 계획, `BLOG_PLAN.md`). `.git/info/exclude`로 제외되어 있다.
+- 로컬 전용(커밋 금지): `DESIGN.md`(디자인 기준 + refero 참고 원본), `DESIGN-anthropic.md`(refero 참고 원본, 2026-10-17 추가), `.plans/`(작업 계획 `BLOG_PLAN.md`, 완료 기록 `BLOG_DONE.md`). `.git/info/exclude`로 제외되어 있다.
 
 ## 개발 원칙 (2026-10-17 사용자 지시)
 
