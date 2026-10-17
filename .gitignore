@@ -4,9 +4,11 @@ dist/
 .env
 .env.*
 
-# Obsidian vault settings and unpublished drafts
+# Obsidian vault settings
 .obsidian/
-posts/_drafts/
+# Writing folder (Obsidian vault for manuscripts, never published) and local logs
+desk/
+logs/
 # Temporary posts written by `npm run test:build`, left behind only if a run is interrupted
 posts/__build-guard__/
 

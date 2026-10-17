@@ -13,7 +13,7 @@
 1. **파일 만들기**: `posts/` 안에 `YYYY-MM-DD-영문-kebab-case.md` 이름으로 만든다.
    - kebab-case = 소문자 영어 단어를 하이픈으로 잇는 표기. 예: `2026-10-20-uv-basics.md`
    - 날짜를 뺀 부분(`uv-basics`)이 글 주소가 된다: `/blog/uv-basics/`. **한 번 올린 뒤에는 바꾸지 않는다**(링크가 깨진다).
-2. **맨 위에 frontmatter를 쓴다.** VS Code에서는 `post` 입력 후 `Ctrl+Space`, Obsidian에서는 `blog-post` 템플릿을 쓴다.
+2. **맨 위에 frontmatter를 쓴다.** VS Code에서는 `post` 입력 후 `Ctrl+Space`, Obsidian에서는 `docs/post-template.md`를 템플릿으로 쓴다.
 
    ```yaml
    ---
@@ -26,7 +26,7 @@
    ```
 
 3. **이미지**는 글과 같은 폴더의 `images/`에 넣고 `![설명](./images/그림.png)`로 쓴다.
-4. **미리 보기**(선택): 터미널에서 `npm run dev` → 브라우저로 http://127.0.0.1:4321/blog/ . 공개 전 글은 `posts/_drafts/`에 두면 "초안" 표시와 함께 여기서만 보인다. 다 보면 `npx astro dev stop`.
+4. **미리 보기**(선택): 터미널에서 `npm run dev` → 브라우저로 http://127.0.0.1:4321/blog/ . 공개 전 원고는 작성 폴더 `desk/`에 두면 "초안" 표시와 함께 여기서만 보인다(양식이 안 맞는 원고는 `logs/desk-check.log`에 이유가 남는다). 다 보면 `npx astro dev stop`.
 5. **올리기**: `git add <글 파일과 이미지>` → `git commit` → `git push`. 1~2분 뒤 사이트에 반영된다.
 
 빌드가 막아 주는 실수: 필수 항목 누락, 날짜 형식 오류, 파일명 규칙 위반(한글·대문자 등), 다른 글과 같은 주소, 없는 이미지. 이런 글은 배포되지 않고, 사이트는 마지막 정상 상태를 유지한다.
@@ -98,7 +98,7 @@ push하면 GitHub Actions가 `npm test` → `check` → `build`를 다시 돌리
   └──────────────────────────────────────┘
 ```
 
-`desk/`는 아직 만들기 전이다(지금은 `posts/_drafts/`가 그 역할).
+`desk/`는 Git에서 제외되어 내 PC에만 있다.
 
 ## 5. 용어
 
@@ -169,7 +169,7 @@ push하면 GitHub Actions가 `npm test` → `check` → `build`를 다시 돌리
 ## 8. 오래 유지하려면
 
 - **백업**: 아래 파일은 Git에 올라가지 않으므로 PC가 망가지면 사라진다. 따로 백업한다.
-  - `posts/_drafts/`(앞으로 `desk/`): 공개 전 원고
+  - `desk/`: 공개 전 원고
   - `DESIGN.md`, `DESIGN-anthropic.md`: 디자인 기준과 참고 원본
   - `.plans/`: 작업 계획과 완료 기록
 - **주소를 지키는 것들**

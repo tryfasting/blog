@@ -52,22 +52,22 @@ test('a valid post builds, so the failures below come from the posts and not fro
   assert.equal(failed, false, output);
 });
 
-test('drafts are left out of every built page, the RSS feed and the sitemap', () => {
-  // posts/_drafts/ may hold real drafts, so only this one file (and the folder, if this test made it) is removed.
-  const draftsDir = join(root, 'posts', '_drafts');
-  const madeDraftsDir = !existsSync(draftsDir);
-  const draftsFile = join(draftsDir, '2026-01-01-guard-drafts-folder.md');
-  mkdirSync(draftsDir, { recursive: true });
-  writeFileSync(draftsFile, post({ title: 'GUARD-DRAFTS-FOLDER' }));
+test('drafts and desk/ manuscripts are left out of every built page, the RSS feed and the sitemap', () => {
+  // desk/ holds the owner's real manuscripts, so only this one file (and the folder, if this test made it) is removed.
+  const deskDir = join(root, 'desk');
+  const madeDeskDir = !existsSync(deskDir);
+  const deskFile = join(deskDir, '2026-01-01-guard-desk-manuscript.md');
+  mkdirSync(deskDir, { recursive: true });
+  writeFileSync(deskFile, post({ title: 'GUARD-DESK-MANUSCRIPT' }));
   try {
     const { failed, output } = buildWith({ '2026-01-01-guard-flagged.md': post({ title: 'GUARD-FLAGGED', draft: true }) });
     assert.equal(failed, false, output);
     const built = builtText();
     assert.match(built, /blog-opened/, 'the published post should still be built');
-    assert.doesNotMatch(built, /GUARD-FLAGGED|guard-flagged|GUARD-DRAFTS-FOLDER|guard-drafts-folder/);
+    assert.doesNotMatch(built, /GUARD-FLAGGED|guard-flagged|GUARD-DESK-MANUSCRIPT|guard-desk-manuscript/);
   } finally {
-    rmSync(draftsFile, { force: true });
-    if (madeDraftsDir) rmdirSync(draftsDir);
+    rmSync(deskFile, { force: true });
+    if (madeDeskDir) rmdirSync(deskDir);
   }
 });
 

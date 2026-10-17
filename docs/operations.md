@@ -17,12 +17,14 @@
 
 | 위치 | 용도 |
 |---|---|
-| `posts/` | 글 (Obsidian 볼트로 여는 폴더) |
-| `posts/_templates/` | Obsidian 기본 Templates용 템플릿 (빌드 제외) |
-| `posts/_drafts/` | 공개 전 초안 (Git 제외, 빌드 제외, `npm run dev`에서만 보임) |
-| `src/content.config.ts` | 컬렉션 정의, frontmatter 스키마 |
+| `posts/` | 등록된 글 (공개) |
+| `desk/` | 작성 폴더: 원고 (Git 제외, 빌드 제외, `npm run dev`에서만 원고 검사를 통과한 것이 보임) |
+| `docs/post-template.md` | 원고 frontmatter 템플릿 |
+| `logs/` | 로컬 기록 (`desk-check.log` 등, Git 제외) |
+| `src/content.config.ts` | 컬렉션 정의, frontmatter 스키마, dev에서 원고 포함 |
+| `src/blog/desk.ts`, `scripts/desk-check.ts` | `desk/` 원고 검사와 로그 (`npm run desk:check`) |
 | `src/blog/` | 레이아웃·컴포넌트·CSS·helper (`posts.ts`의 `withBase`로 모든 내부 링크에 `/blog`를 붙임) |
-| `src/blog/lib/` | Astro 없이 도는 순수 함수(slug 계산·검사, 주소 조립, 날짜 표기). 페이지는 `posts.ts`를 거쳐 쓴다 |
+| `src/blog/lib/` | Astro 없이 도는 순수 함수(slug 계산·검사, 원고 검사, 주소 조립, 날짜 표기). 페이지는 `posts.ts`를 거쳐 쓴다 |
 | `tests/` | `lib` 단위 테스트(`npm test`), 빌드가 실패해야 하는 경우 검사(`npm run test:build`, 느림) |
 | `src/pages/` | 라우트: `index`(목록), `[slug]`(글), `tags/[tag]`, `rss.xml`, `404` |
 | `astro.config.mjs` | `base: '/blog'` (주소가 `/blog/` 아래인 이유) |
@@ -60,40 +62,26 @@
   ---
   ```
 
-- 공개 레포이므로 커밋된 `draft: true` 글은 사이트에는 안 보여도 GitHub 소스에서는 보인다. 공개 전 글은 `posts/_drafts/`에 둔다.
+- 공개 레포이므로 커밋된 `draft: true` 글은 사이트에는 안 보여도 GitHub 소스에서는 보인다. 공개 전 글은 `desk/`에 둔다.
 
 ## 글 쓰고 올리기
 
-### Obsidian
+### 작성 폴더 `desk/`
 
-처음 한 번 설정한다 (`posts/`를 볼트로 연다. `posts/.obsidian/`은 Git에서 제외된다).
+- 글은 저장소 루트의 작성 폴더 `desk/`에서 쓴다. Git에서 제외되어 내 PC에만 있고, 안의 구조(하위 폴더, Obsidian 설정, 메모)는 자유다.
+- 새 원고는 템플릿 [docs/post-template.md](post-template.md)의 frontmatter 양식을 따른다(Obsidian Templates나 QuickAdd 등에 복사해 쓴다). VS Code에서는 `post` 입력 후 `Ctrl+Space`.
+- 이미지는 원고와 같은 폴더의 `images/`에 두고 `![설명](./images/그림.png)`로 참조한다.
 
-| 설정 위치 | 값 |
-|---|---|
-| Core plugins → Templates | 켜기. Template folder location: `_templates` |
-| Files and links → Default location for new attachments | In subfolder under current folder, Subfolder name: `images` |
-| Files and links → New link format | Relative path to file |
-| Files and links → Use [[Wikilinks]] | 끄기 |
+### 원고 미리보기
 
-글 쓰는 순서
+- `npm run dev`를 실행하고 http://127.0.0.1:4321/blog/ 를 연다. 등록된 글 전체와, `desk/`의 원고 가운데 원고 검사를 통과한 것이 "초안" 표시와 함께 보인다. 원고를 고쳐 저장하면 화면이 바로 바뀐다.
+- 원고 검사(파일명, frontmatter, YAML 문법, slug 중복, 이미지)를 통과하지 못한 파일은 건너뛰고, 터미널 경고와 `logs/desk-check.log`(Git 제외)에 파일 경로와 이유를 남긴다. 서버 없이 같은 검사만 하려면 `npm run desk:check`.
+- 원고 검사는 dev를 시작할 때 한 번 한다. 원고 파일을 새로 만들었거나 제외됐던 원고를 고쳤다면 dev를 다시 시작한다.
+- 원고와 `draft: true`인 글은 RSS와 `npm run build` 결과물에 들어가지 않는다. Astro 7의 dev 서버는 뒤에서 계속 돌므로 다 보면 `npx astro dev stop`으로 끈다.
 
-1. 주제 폴더(또는 `posts/` 바로 아래)에 새 노트를 `YYYY-MM-DD-영문-kebab-case` 이름으로 만든다.
-2. 명령 팔레트 → "Templates: Insert template" → `blog-post`.
-3. `title`(파일명이 들어가 있음)과 `description`, `tags`를 고쳐 쓴다.
-4. 이미지는 붙여 넣으면 같은 폴더의 `images/`에 저장되고 표준 링크로 들어간다. 파일명에 공백이 있어도 된다.
-5. 저장 후 `main`에 push한다.
+### 등록
 
-공개 전 글은 `posts/_drafts/`에 두었다가 공개할 때 주제 폴더로 옮긴다.
-
-### 초안 미리보기
-
-`npm run dev`를 실행하고 `http://127.0.0.1:4321/blog/`를 연다. `posts/_drafts/`의 글과 `draft: true`인 글이 "초안" 표시와 함께 목록·태그·글 페이지에 보인다. RSS와 `npm run build` 결과물에는 들어가지 않는다. Astro 7의 dev 서버는 뒤에서 계속 돌므로 다 보면 `npx astro dev stop`으로 끈다.
-
-### VS Code
-
-1. `posts/` 안에 `YYYY-MM-DD-영문-kebab-case.md` 파일을 만든다.
-2. `Ctrl+Shift+P` → "Insert Snippet" → "Blog post" (또는 `post` 입력 후 `Ctrl+Space`). 날짜는 오늘로 채워진다.
-3. 이미지는 같은 폴더의 `images/`에 넣고 `![설명](./images/파일.png)`로 참조한다.
+- 원고를 `posts/` 바로 아래로 옮기고 커밋·push한다. (등록 도구가 생기면 이 과정을 자동으로 한다.)
 
 ### push 전 확인 (선택)
 

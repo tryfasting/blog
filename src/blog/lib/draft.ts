@@ -5,11 +5,11 @@ export interface DraftEntry {
 }
 
 /**
- * A post is a draft if its frontmatter says so or it still sits in posts/_drafts/.
- * Publishing a post from _drafts/ is just moving the file, so its frontmatter may already say draft: false.
+ * A post is a draft if its frontmatter says so or it is a manuscript from desk/ (only `npm run dev` loads those).
+ * A finished manuscript usually already says draft: false, so the folder decides.
  */
 export function isDraft({ id, draft }: DraftEntry): boolean {
-  return draft || id.startsWith('_drafts/');
+  return draft || id.startsWith('desk/');
 }
 
 export function isVisible(entry: DraftEntry, { includeDrafts }: { includeDrafts: boolean }): boolean {
