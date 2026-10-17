@@ -9,6 +9,7 @@
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "test": "node --test \"tests/*.test.ts\"",
+    "test:build": "node --test tests/build-guards.test.mjs",
     "verify": "node scripts/verify-blog.cjs"
   },
   "dependencies": {

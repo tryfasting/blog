@@ -7,6 +7,8 @@ dist/
 # Obsidian vault settings and unpublished drafts
 .obsidian/
 posts/_drafts/
+# Temporary posts written by `npm run test:build`, left behind only if a run is interrupted
+posts/__build-guard__/
 
 # Verification screenshots (npm run verify)
 artifacts/

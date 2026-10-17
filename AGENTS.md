@@ -34,6 +34,7 @@
    | `src/blog/posts.ts` | 글 조회·정렬·draft 제외, 페이지가 쓰는 helper의 단일 진입점(`lib` 함수를 Astro 값과 연결, 예: `withBase`) | 마크업, 스타일, 순수 계산 로직 |
    | `src/blog/lib/*.ts` | Astro 없이 도는 순수 계산(`slug.ts` slug·태그 slug·slug 검사, `url.ts` 주소 조립, `date.ts` 날짜 표기). 단위 테스트 대상 | `astro:*`·`import.meta.env` 사용, 페이지에서 직접 import |
    | `tests/*.test.ts` | `lib` 단위 테스트(`npm test`, Node 내장 `node:test`) | Astro 런타임 의존 |
+   | `tests/build-guards.test.mjs` | 빌드가 실패해야 하는 글을 임시로 만들어 `astro build` 실패와 오류 문구 확인(`npm run test:build`) | `dist/` 덮어쓰기, 실행 뒤 임시 파일 남기기 |
    | `src/blog/site.ts` | 사이트 이름·설명 같은 상수 | 로직 |
    | `src/blog/BlogLayout.astro`, `PostList.astro` | 페이지 뼈대와 목록 마크업 | 컬렉션 직접 조회 |
    | `src/blog/blog.css`, `code-theme.mjs` | 모든 스타일과 코드 하이라이트 | 페이지별 인라인 스타일 |
@@ -41,7 +42,8 @@
 
 3. **TDD 먼저**: 새 로직이나 버그 수정은 실패하는 테스트를 먼저 쓰고, 통과시키는 순서로 한다. 테스트 이름은 기대 동작을 문장으로 적는다.
    - 순수 계산은 `src/blog/lib/`에 두고 `tests/*.test.ts`에 테스트를 먼저 쓴다. `npm test`로 실행한다(Node 24가 `.ts`를 직접 실행하므로 import에 `.ts` 확장자를 붙인다).
-   - 화면·링크는 `npm run verify`가 확인한다. 빌드가 실패해야 하는 경우(slug 중복·필수 항목 누락·한글 파일명·없는 이미지)는 아직 임시 파일로 손으로 확인한다(자동화 예정, `.plans/BLOG_PLAN.md` 7절).
+   - 빌드가 실패해야 하는 경우(slug 중복·한글 파일명·예약어 `tags`·필수 항목 누락·날짜 형식·없는 이미지)는 `npm run test:build`가 확인한다. 실제 빌드를 여러 번 돌려 30초쯤 걸리므로 빌드 검사·스키마·글 경로 처리를 바꿀 때 실행한다. `npm run dev`가 떠 있을 때는 돌리지 않는다.
+   - 화면·링크는 `npm run verify`가 확인한다.
 4. **완료 기준 먼저 정의**: 아래 "검증 루프" 1번. 기준이 없으면 작업을 시작하지 않는다.
 5. **규칙은 AGENTS.md와 docs로 문서화**: 새 규칙·결정이 생기면 그 변경과 같은 커밋에서 이 파일, `docs/operations.md`, 로컬 `DESIGN.md`(디자인), 로컬 `.plans/BLOG_PLAN.md`(계획) 중 맞는 곳에 적는다. 같은 역할의 문서가 있으면 새로 만들지 않고 고쳐 쓴다. 같은 내용을 두 곳에 복사하지 않고 한 곳에 두고 링크한다.
 6. **리뷰 가능한 크기**: 한 커밋은 한 가지 목적만 담는다. lockfile을 뺀 변경이 대략 200줄을 넘거나 목적이 둘 이상이면 나눈다. 커밋 메시지에 무엇을·왜를 적는다.
