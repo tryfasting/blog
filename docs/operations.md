@@ -17,7 +17,7 @@
 | `src/blog/` | 레이아웃·컴포넌트·CSS·helper (`posts.ts`의 `withBase`로 모든 내부 링크에 `/blog`를 붙임) |
 | `src/pages/` | 라우트: `index`(목록), `[slug]`(글), `tags/[tag]`, `rss.xml`, `404` |
 | `astro.config.mjs` | `base: '/blog'` (주소가 `/blog/` 아래인 이유) |
-| `scripts/verify-blog.cjs` | 화면 검증 (`npm run verify [기본 URL]`) |
+| `scripts/verify-blog.cjs` | 화면 검증과 스크린샷 (`npm run verify -- [기본 URL] [출력 폴더]`, 기본 출력 `artifacts/verify/`, Git 제외) |
 
 - 내부 링크는 반드시 `withBase()`로 만든다. `/blog/`를 직접 쓰거나 `/`로 시작하는 경로를 그대로 쓰지 않는다.
 

@@ -18,5 +18,15 @@
 - 브랜치는 `main` 하나다. 글과 코드 모두 `main`에 push하면 배포된다.
 - 내부 링크는 `src/blog/posts.ts`의 `withBase()`로 만든다(`base: '/blog'`).
 - 상단 "포트폴리오" 링크는 다른 사이트이므로 `/general/`를 base 없이 쓴다.
-- 검증: `npm run check`, `npm run build`. 화면이 바뀌면 `npm run preview` 후 `npm run verify`도 실행한다.
+- 검증은 아래 "검증 루프"를 따른다.
 - 로컬 전용(커밋 금지): `DESIGN.md`(디자인 참고 원본), `.plans/`(작업 계획). `.git/info/exclude`로 제외되어 있다.
+
+## 검증 루프 (모든 작업에 적용)
+
+이 저장소는 `main`에 push하는 순간 공개된다. 그래서 아래 1~3을 **push 전에** 끝낸다.
+
+1. **작업 전 완료 기준 표**: 작업을 시작하기 전에 `| # | 완료 기준 | 확인 방법 |` 표를 사용자에게 먼저 보여 준다. 확인 방법은 실행할 명령이나 비교 대상처럼 구체적으로 쓴다.
+2. **검증 실행과 보고**: 작업 후 기준마다 검증을 실제로 실행하고, 기준 번호별로 결과(통과·실패와 근거가 되는 출력)를 보고한다. 실패했거나 확인하지 못한 기준은 숨기지 않고 그대로 적는다.
+   - 기본 명령: `npm run check`, `npm run build`, `npm run preview` 후 `npm run verify`
+3. **스크린샷을 사용자에게 보여주기**: 글만 바꾼 작업이어도 `npm run verify`로 스크린샷을 새로 만든다(기본 `artifacts/verify/`, Git 제외). 에이전트가 먼저 열어 확인한 뒤, 대표 화면(최소 글 목록과 바뀐 글의 1440px·375px)을 파일로 사용자에게 보여 준다. 스크린샷 생성 시각과 대상 커밋을 함께 적는다.
+4. push 뒤에는 Actions 성공과 운영 주소(`npm run verify -- https://tryfasting.github.io <출력 폴더>`)도 확인한다.

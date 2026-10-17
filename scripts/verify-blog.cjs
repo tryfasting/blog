@@ -1,12 +1,25 @@
-// Browser check of the blog: node scripts/verify-blog.cjs [origin]
+// Browser check of the blog: node scripts/verify-blog.cjs [origin] [outDir]
 // origin defaults to the local preview (http://127.0.0.1:4321); pass https://tryfasting.github.io for production.
+// Full-page screenshots of every checked page go to outDir (default artifacts/verify, git-ignored).
+const fs = require('node:fs');
+const path = require('node:path');
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 
 const origin = (process.argv[2] ?? 'http://127.0.0.1:4321').replace(/\/$/, '');
+const output = process.argv[3] ?? 'artifacts/verify';
 const home = `${origin}/blog/`;
 
+/** '/blog/' -> 'index', '/blog/tags/astro/' -> 'tags-astro' */
+function shotName(url, width) {
+  const slug = new URL(url).pathname.replace(/^\/blog\/?/, '').replace(/\/$/, '').replace(/\//g, '-') || 'index';
+  return `${slug}-${width}.png`;
+}
+
 (async () => {
+  // Start from an empty set of screenshots so removed pages do not leave stale images.
+  fs.mkdirSync(output, { recursive: true });
+  for (const file of fs.readdirSync(output)) if (file.endsWith('.png')) fs.rmSync(path.join(output, file));
   const browser = await chromium.launch({ channel: 'chrome', headless: true });
   const errors = [];
   const results = [];
@@ -44,7 +57,9 @@ const home = `${origin}/blog/`;
         assert.deepEqual(result.strayLinks, [], `links outside /blog/: ${url}`);
         assert.equal(result.portfolioLink, 1, `missing portfolio link: ${url}`);
         assert.equal(result.unsafeBlank, 0, `target=_blank without noopener: ${url}`);
-        results.push({ url: new URL(url).pathname, width });
+        const file = shotName(url, width);
+        await page.screenshot({ path: path.join(output, file), fullPage: true });
+        results.push({ url: new URL(url).pathname, width, file });
       }
     }
 
@@ -55,7 +70,11 @@ const home = `${origin}/blog/`;
     assert.equal((await page.goto(`${home}no-such-post/`)).status(), 404);
 
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ passed: true, pages: pages.length, checks: results.length }));
+    fs.writeFileSync(
+      path.join(output, 'meta.json'),
+      JSON.stringify({ passed: true, capturedAt: new Date().toISOString(), origin, results }, null, 2),
+    );
+    console.log(JSON.stringify({ passed: true, pages: pages.length, checks: results.length, screenshots: output }));
   } finally {
     await browser.close();
   }
