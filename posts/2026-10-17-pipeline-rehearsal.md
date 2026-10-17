@@ -8,3 +8,5 @@ tags: [blog]
 등록 도구가 원고를 `posts/`로 옮기고, 빌드하고, 배포까지 하는지 확인하는 시험 글입니다.
 
 ![등록 흐름](./images/pipeline-rehearsal/publish-flow.png)
+
+갱신 시험: 등록한 뒤 원고를 고쳐 다시 등록했습니다.
