@@ -1,4 +1,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { joinBase } from './lib/url.ts';
+
+// Pages import everything from this module; the pure helpers live in ./lib so they can be unit-tested without Astro.
+export { formatDate, isoDate } from './lib/date.ts';
 
 export type Post = CollectionEntry<'posts'>;
 
@@ -48,13 +52,9 @@ export function tagSlug(tag: string): string {
   return tag.trim().toLowerCase().replace(/\s+/g, '-');
 }
 
-/**
- * Prefixes a site-internal path with the configured base (`/blog`).
- * Works whether BASE_URL ends with a slash or not: withBase('/') === '/blog/'.
- */
+/** Prefixes a site-internal path with the configured base (`/blog`): withBase('/') === '/blog/'. */
 export function withBase(path: string): string {
-  const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
-  return `${base}/${path.replace(/^\/+/, '')}`;
+  return joinBase(import.meta.env.BASE_URL, path);
 }
 
 export function postUrl(post: Post): string {
@@ -63,14 +63,4 @@ export function postUrl(post: Post): string {
 
 export function tagUrl(tag: string): string {
   return withBase(`/tags/${tagSlug(tag)}/`);
-}
-
-/** YAML dates are parsed as UTC midnight, so format in UTC to keep the written day. */
-export function formatDate(date: Date): string {
-  const pad = (value: number) => String(value).padStart(2, '0');
-  return `${date.getUTCFullYear()}.${pad(date.getUTCMonth() + 1)}.${pad(date.getUTCDate())}`;
-}
-
-export function isoDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
 }

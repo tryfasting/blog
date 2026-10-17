@@ -22,6 +22,8 @@
 | `posts/_drafts/` | 공개 전 초안 (Git 제외, 빌드 제외) |
 | `src/content.config.ts` | 컬렉션 정의, frontmatter 스키마 |
 | `src/blog/` | 레이아웃·컴포넌트·CSS·helper (`posts.ts`의 `withBase`로 모든 내부 링크에 `/blog`를 붙임) |
+| `src/blog/lib/` | Astro 없이 도는 순수 함수(주소 조립·날짜 표기). 페이지는 `posts.ts`를 거쳐 쓴다 |
+| `tests/` | `lib` 단위 테스트 (`npm test`) |
 | `src/pages/` | 라우트: `index`(목록), `[slug]`(글), `tags/[tag]`, `rss.xml`, `404` |
 | `astro.config.mjs` | `base: '/blog'` (주소가 `/blog/` 아래인 이유) |
 | `scripts/verify-blog.cjs` | 화면 검증과 스크린샷 (`npm run verify -- [기본 URL] [출력 폴더]`, 기본 출력 `artifacts/verify/`, Git 제외) |
@@ -88,7 +90,7 @@
 
 ### push 전 확인 (선택)
 
-`npm run check`와 `npm run build`가 통과하면 배포도 통과한다.
+`npm run check`와 `npm run build`가 통과하면 배포도 통과한다. 코드를 바꿨다면 `npm test`도 실행한다.
 
 ## 폴더와 URL
 

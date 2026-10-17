@@ -31,14 +31,17 @@
    | 모듈 | 책임 | 하지 않는 것 |
    |---|---|---|
    | `src/content.config.ts` | 글 컬렉션과 frontmatter 스키마 | 화면, URL |
-   | `src/blog/posts.ts` | 글 조회·정렬·draft 제외, slug와 내부 URL(`withBase`), 날짜 표기 | 마크업, 스타일 |
+   | `src/blog/posts.ts` | 글 조회·정렬·draft 제외, 페이지가 쓰는 helper의 단일 진입점(`lib` 함수를 Astro 값과 연결, 예: `withBase`) | 마크업, 스타일, 순수 계산 로직 |
+   | `src/blog/lib/*.ts` | Astro 없이 도는 순수 계산(`url.ts` 주소 조립, `date.ts` 날짜 표기). 단위 테스트 대상 | `astro:*`·`import.meta.env` 사용, 페이지에서 직접 import |
+   | `tests/*.test.ts` | `lib` 단위 테스트(`npm test`, Node 내장 `node:test`) | Astro 런타임 의존 |
    | `src/blog/site.ts` | 사이트 이름·설명 같은 상수 | 로직 |
    | `src/blog/BlogLayout.astro`, `PostList.astro` | 페이지 뼈대와 목록 마크업 | 컬렉션 직접 조회 |
    | `src/blog/blog.css`, `code-theme.mjs` | 모든 스타일과 코드 하이라이트 | 페이지별 인라인 스타일 |
    | `src/pages/*` | 위 모듈을 조합한 라우트 | `getCollection` 직접 호출, `/blog/`·`/` 경로 하드코딩 |
 
 3. **TDD 먼저**: 새 로직이나 버그 수정은 실패하는 테스트를 먼저 쓰고, 통과시키는 순서로 한다. 테스트 이름은 기대 동작을 문장으로 적는다.
-   - 현재 상태(2026-10-17): 단위 테스트 도구가 **아직 없다.** 화면·링크는 `npm run verify`가, 빌드가 실패해야 하는 경우(slug 중복·필수 항목 누락·한글 파일명·없는 이미지)는 임시 파일로 손으로 확인해 왔다. 단위 테스트(`npm test`, Node 내장 `node:test`)와 빌드 실패 검사 자동화를 갖추는 것이 다음 작업의 첫 단계다(`.plans/BLOG_PLAN.md` 7절).
+   - 순수 계산은 `src/blog/lib/`에 두고 `tests/*.test.ts`에 테스트를 먼저 쓴다. `npm test`로 실행한다(Node 24가 `.ts`를 직접 실행하므로 import에 `.ts` 확장자를 붙인다).
+   - 화면·링크는 `npm run verify`가 확인한다. 빌드가 실패해야 하는 경우(slug 중복·필수 항목 누락·한글 파일명·없는 이미지)는 아직 임시 파일로 손으로 확인한다(자동화 예정, `.plans/BLOG_PLAN.md` 7절).
 4. **완료 기준 먼저 정의**: 아래 "검증 루프" 1번. 기준이 없으면 작업을 시작하지 않는다.
 5. **규칙은 AGENTS.md와 docs로 문서화**: 새 규칙·결정이 생기면 그 변경과 같은 커밋에서 이 파일, `docs/operations.md`, 로컬 `DESIGN.md`(디자인), 로컬 `.plans/BLOG_PLAN.md`(계획) 중 맞는 곳에 적는다. 같은 역할의 문서가 있으면 새로 만들지 않고 고쳐 쓴다. 같은 내용을 두 곳에 복사하지 않고 한 곳에 두고 링크한다.
 6. **리뷰 가능한 크기**: 한 커밋은 한 가지 목적만 담는다. lockfile을 뺀 변경이 대략 200줄을 넘거나 목적이 둘 이상이면 나눈다. 커밋 메시지에 무엇을·왜를 적는다.
@@ -50,6 +53,6 @@
 
 1. **작업 전 완료 기준 표**: 작업을 시작하기 전에 `| # | 완료 기준 | 확인 방법 |` 표를 사용자에게 먼저 보여 준다. 확인 방법은 실행할 명령이나 비교 대상처럼 구체적으로 쓴다.
 2. **검증 실행과 보고**: 작업 후 기준마다 검증을 실제로 실행하고, 기준 번호별로 결과(통과·실패와 근거가 되는 출력)를 보고한다. 실패했거나 확인하지 못한 기준은 숨기지 않고 그대로 적는다.
-   - 기본 명령: `npm run check`, `npm run build`, `npm run preview` 후 `npm run verify`
+   - 기본 명령: `npm test`, `npm run check`, `npm run build`, `npm run preview` 후 `npm run verify`
 3. **스크린샷을 사용자에게 보여주기**: 글만 바꾼 작업이어도 `npm run verify`로 스크린샷을 새로 만든다(기본 `artifacts/verify/`, Git 제외). 에이전트가 먼저 열어 확인한 뒤, 대표 화면(최소 글 목록과 바뀐 글의 1440px·375px)을 파일로 사용자에게 보여 준다. 스크린샷 생성 시각과 대상 커밋을 함께 적는다.
 4. push 뒤에는 Actions 성공과 운영 주소(`npm run verify -- https://tryfasting.github.io <출력 폴더>`)도 확인한다.
