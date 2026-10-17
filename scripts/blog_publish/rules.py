@@ -65,7 +65,9 @@ def plan_placement(manuscript_path: str, text: str) -> Placement:
         return f"![{alt}](./images/{slug}/{posixpath.basename(src)}{title})"
 
     new_text = IMAGE_LINK.sub(relink, text)
-    images = tuple(ImageCopy(source, f"posts/images/{slug}/{file_name}") for file_name, source in sources.items())
+    images = tuple(
+        ImageCopy(source, f"posts/images/{slug}/{file_name}") for file_name, source in sources.items()
+    )
     return Placement(f"posts/{name}", new_text, images)
 
 

@@ -3,7 +3,6 @@
 from datetime import datetime
 
 import pytest
-
 from blog_publish.rules import (
     ImageCopy,
     PlacementError,
@@ -29,10 +28,10 @@ def test_a_manuscript_goes_straight_under_posts() -> None:
 
 
 def test_images_move_to_a_folder_named_after_the_slug_and_links_follow() -> None:
-    text = "앞 ![흐름](./images/flow.png) 뒤\n![b](images/my%20shot.png \"제목\")\n"
+    text = '앞 ![흐름](./images/flow.png) 뒤\n![b](images/my%20shot.png "제목")\n'
     placement = plan_placement("desk/python/2026-10-20-uv-basics.md", text)
     assert placement.text == (
-        "앞 ![흐름](./images/uv-basics/flow.png) 뒤\n![b](./images/uv-basics/my%20shot.png \"제목\")\n"
+        '앞 ![흐름](./images/uv-basics/flow.png) 뒤\n![b](./images/uv-basics/my%20shot.png "제목")\n'
     )
     assert placement.images == (
         ImageCopy("desk/python/images/flow.png", "posts/images/uv-basics/flow.png"),
@@ -80,12 +79,19 @@ def test_only_the_newest_logs_are_kept() -> None:
 
 
 def test_post_url_joins_site_and_slug() -> None:
-    assert post_url("https://tryfasting.github.io/blog/", "uv-basics") == "https://tryfasting.github.io/blog/uv-basics/"
+    assert (
+        post_url("https://tryfasting.github.io/blog/", "uv-basics")
+        == "https://tryfasting.github.io/blog/uv-basics/"
+    )
 
 
 @pytest.mark.parametrize(
     "remote",
-    ["https://github.com/tryfasting/blog.git", "https://github.com/tryfasting/blog", "git@github.com:tryfasting/blog.git"],
+    [
+        "https://github.com/tryfasting/blog.git",
+        "https://github.com/tryfasting/blog",
+        "git@github.com:tryfasting/blog.git",
+    ],
 )
 def test_github_repo_is_read_from_the_remote_url(remote: str) -> None:
     assert github_repo(remote) == "tryfasting/blog"

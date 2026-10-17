@@ -3,6 +3,9 @@ dist/
 .astro/
 .env
 .env.*
+# Python caches (publish tool and its tests)
+__pycache__/
+.pytest_cache/
 
 # Obsidian vault settings
 .obsidian/
