@@ -85,18 +85,9 @@
 
 ### 등록 (등록 도구)
 
-저장소 루트의 `publish.cmd`를 더블클릭하면 창이 열린다(터미널에서는 `uv run scripts/publish.py`). 원고를 고르고 **등록**을 누르면 아래 단계를 차례로 실행한다. 전 과정이 코드로만 돈다(LLM 없음).
+저장소 루트의 `publish.cmd`를 더블클릭하면 창이 열린다(터미널에서는 `uv run scripts/publish.py`). 원고를 고르고 **등록**을 누르면 정해진 단계를 차례로 실행한다. 전 과정이 코드로만 돈다(LLM 없음).
 
-| 단계 | 하는 일 |
-|---|---|
-| 사전 점검(preflight) | `main` 브랜치인지, 커밋하지 않은 변경이 없는지, `posts/`가 깨끗한지, 원격과 같은 상태인지, `node_modules`가 있는지 |
-| 원고 검사(validate) | `npm run desk:check`와 같은 규칙. 이미 등록된 원고면 갱신할지 묻는다 |
-| 배치(place) | 원고를 `posts/<파일명>`으로, 이미지를 `posts/images/<slug>/`로 복사하고 등록된 사본의 이미지 경로만 바꾼다. `desk/` 원본은 그대로 둔다 |
-| 빌드(build) | `npm run build` |
-| 커밋(commit) | `posts/` 변경만 커밋. 메시지는 `post: <slug>`, 갱신은 `post: update <slug>` |
-| push | `git push origin main` |
-| Actions | GitHub Actions가 끝날 때까지 기다린다. 실패하면 실행 주소와 실패한 단계를 보여 준다 |
-| 운영 확인(live) | 새 글 주소가 200이 되고 RSS에 들어가면 브라우저로 연다 |
+단계별 설명과 실패했을 때 할 일은 [README](../README.md)의 "2.3 등록"과 "2.5 문제가 생겼을 때"에 있다. 단계 이름은 사전 점검(preflight), 원고 검사(validate), 배치(place), 빌드(build), 커밋(commit), push, Actions, 운영 확인(live)이다.
 
 - push 전에 실패하면 이번 실행이 바꾼 파일과 커밋을 모두 되돌린다. 직접 고친 내용은 건드리지 않는다. push 뒤에 실패하면 사이트는 마지막 성공 배포 상태로 남는다.
 - 실행 기록: `logs/publish/<시각>_<slug>.log`(단계마다 시작·끝·소요 시간·명령·종료 코드·출력)와 `logs/publish/summary.jsonl`(실행마다 한 줄). 최근 50개만 남긴다. 창의 **로그 열기**로 연다.
