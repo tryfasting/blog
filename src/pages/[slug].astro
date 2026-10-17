@@ -9,6 +9,7 @@ import {
   postReadingMinutes,
   postSlug,
   tagUrl,
+  tocItems,
   withBase,
   type Post,
 } from '../blog/posts';
@@ -22,9 +23,10 @@ interface Props {
   post: Post;
 }
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const toc = tocItems(headings);
 ---
-<BlogLayout title={post.data.title} description={post.data.description} publishedTime={post.data.date} tags={post.data.tags}>
+<BlogLayout title={post.data.title} description={post.data.description} publishedTime={post.data.date} tags={post.data.tags} wide>
   <Fragment slot="hero">
     {postIsDraft(post) && <span class="draft-label">초안</span>}
     <h1>{post.data.title}</h1>
@@ -50,10 +52,20 @@ const { Content } = await render(post);
       )}
     </dl>
   </Fragment>
-  <article class="post">
-    <div class="prose">
-      <Content />
-    </div>
-  </article>
-  <p class="back-link"><a href={withBase('/')}>← 글 목록</a></p>
+  <div class="post-layout">
+    {toc.length > 0 && (
+      <nav class="toc" aria-label="목차">
+        <p class="toc-title">목차</p>
+        <ol>
+          {toc.map((item) => <li class:list={{ 'toc-sub': item.depth === 3 }}><a href={`#${item.slug}`}>{item.text}</a></li>)}
+        </ol>
+      </nav>
+    )}
+    <article class="post">
+      <div class="prose">
+        <Content />
+      </div>
+      <p class="back-link"><a href={withBase('/')}>← 글 목록</a></p>
+    </article>
+  </div>
 </BlogLayout>

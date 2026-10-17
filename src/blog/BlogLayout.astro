@@ -12,8 +12,10 @@ interface Props {
   /** Set on post pages to emit article metadata. */
   publishedTime?: Date;
   tags?: string[];
+  /** Post pages: widen the main area so a table of contents fits beside the 680px column. */
+  wide?: boolean;
 }
-const { title, description, publishedTime, tags = [] } = Astro.props;
+const { title, description, publishedTime, tags = [], wide = false } = Astro.props;
 const pageTitle = title === blogTitle ? title : `${title} — ${blogTitle}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://tryfasting.github.io');
 const home = withBase('/');
@@ -58,7 +60,7 @@ const isList = Astro.url.pathname === home;
         </div>
       )}
     </div>
-    <main id="main" class="blog-main">
+    <main id="main" class:list={['blog-main', { 'blog-main--wide': wide }]}>
       <slot />
     </main>
     <footer class="blog-footer">
