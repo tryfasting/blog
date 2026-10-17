@@ -44,6 +44,14 @@ function shotName(url, width) {
         const response = await page.goto(url, { waitUntil: 'networkidle' });
         assert.equal(response.status(), 200, url);
         await page.evaluate(() => document.fonts.ready);
+        // Astro marks Markdown images loading="lazy", so images below the fold would count as broken
+        // (and be blank in the full-page screenshot) unless they are loaded first.
+        await page.evaluate(() =>
+          Promise.all([...document.images].map((image) => {
+            image.loading = 'eager';
+            return image.decode().catch(() => {});
+          })),
+        );
         const result = await page.evaluate(() => ({
           overflow: document.documentElement.scrollWidth > innerWidth,
           images: [...document.images].every((image) => image.complete && image.naturalWidth > 0),
