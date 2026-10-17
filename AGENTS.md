@@ -2,7 +2,7 @@
 
 이 저장소는 개발 블로그다. GitHub Pages 프로젝트 사이트로 `https://tryfasting.github.io/blog/`에 배포된다. 포트폴리오(`tryfasting/tryfasting.github.io`)와는 별개의 저장소이며 코드·빌드·패키지를 공유하지 않는다.
 
-**도메인 전체 구조(두 저장소, GitHub Actions, Pages, 주소 담당)는 포트폴리오 저장소의 `ARCHITECTURE.md`가 원본이다.** 로컬 `../tryfasting-portfolio/ARCHITECTURE.md`, GitHub https://github.com/tryfasting/tryfasting.github.io/blob/dev/ARCHITECTURE.md. 복사하지 않고 그 문서를 읽는다.
+**도메인 전체 구조(두 저장소, GitHub Actions, Pages, 주소 담당)는 포트폴리오 저장소의 `ARCHITECTURE.md`가 원본이다.** 로컬 `../tryfasting-portfolio/ARCHITECTURE.md`, GitHub https://github.com/tryfasting/tryfasting.github.io/blob/main/ARCHITECTURE.md. 복사하지 않고 그 문서를 읽는다.
 
 ## 공통 규칙
 
