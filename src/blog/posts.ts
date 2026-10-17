@@ -7,6 +7,7 @@ import { joinBase } from './lib/url.ts';
 // Pages import everything from this module; the pure helpers live in ./lib so they can be unit-tested without Astro.
 export { formatDate, isoDate } from './lib/date.ts';
 export { tagSlug } from './lib/slug.ts';
+export { tagCounts, type TagCount } from './lib/tags.ts';
 export { tocItems, type TocItem } from './lib/toc.ts';
 
 export type Post = CollectionEntry<'posts'>;

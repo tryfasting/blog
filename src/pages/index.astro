@@ -1,7 +1,7 @@
 ---
 import BlogLayout from '../blog/BlogLayout.astro';
 import PostList from '../blog/PostList.astro';
-import { getVisiblePosts } from '../blog/posts';
+import { getVisiblePosts, withBase } from '../blog/posts';
 import { blogDescription, blogTitle } from '../blog/site';
 
 const posts = await getVisiblePosts();
@@ -12,4 +12,7 @@ const posts = await getVisiblePosts();
     <p class="hero-description">{blogDescription}</p>
   </Fragment>
   <PostList posts={posts} />
+  {posts.some((post) => post.data.tags.length > 0) && (
+    <p class="more-tags"><a href={withBase('/tags/')}>모든 태그 보기 →</a></p>
+  )}
 </BlogLayout>

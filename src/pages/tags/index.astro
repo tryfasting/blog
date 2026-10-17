@@ -1,0 +1,20 @@
+---
+import BlogLayout from '../../blog/BlogLayout.astro';
+import { getVisiblePosts, tagCounts, tagUrl, withBase } from '../../blog/posts';
+
+const tags = tagCounts((await getVisiblePosts()).map((post) => post.data.tags));
+---
+<BlogLayout title="태그" description="모든 태그와 태그별 글 수">
+  <Fragment slot="hero">
+    <h1>태그</h1>
+    <p class="hero-description">태그 {tags.length}개 · 글이 많은 순</p>
+  </Fragment>
+  {tags.length === 0 ? (
+    <p class="empty">아직 태그가 없습니다.</p>
+  ) : (
+    <ul class="tag-cloud" aria-label="모든 태그">
+      {tags.map(({ tag, count }) => <li><a href={tagUrl(tag)}>#{tag}<span class="tag-count">{count}</span></a></li>)}
+    </ul>
+  )}
+  <p class="back-link"><a href={withBase('/')}>← 전체 글 목록</a></p>
+</BlogLayout>

@@ -170,6 +170,27 @@ a { color: inherit; }
 }
 .tag-list a:hover { color: var(--color-ink); background: var(--color-hairline); }
 
+/* Tag overview (/blog/tags/): every tag with its post count, reached from the list page. */
+.tag-cloud { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; }
+.tag-cloud a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-control);
+  background: var(--color-surface-nested);
+  color: var(--color-graphite);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.tag-cloud a:hover { color: var(--color-ink); background: var(--color-hairline); }
+.tag-count { color: var(--color-muted); font-size: var(--text-caption); font-weight: 400; font-variant-numeric: tabular-nums; }
+.more-tags { margin: var(--space-32) 0 0; font-size: 15px; }
+.more-tags a { color: var(--color-graphite); text-underline-offset: 3px; }
+.more-tags a:hover { color: var(--color-ink); }
+
 /* Only `npm run dev` renders drafts. Outlined so it never reads as a clickable tag. */
 .draft-label {
   display: inline-block;
