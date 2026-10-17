@@ -20,7 +20,7 @@
 - 내부 링크는 `src/blog/posts.ts`의 `withBase()`로 만든다(`base: '/blog'`).
 - 상단 "포트폴리오" 링크는 다른 사이트이므로 `/general/`를 base 없이 쓴다.
 - 검증은 아래 "검증 루프"를 따른다.
-- 로컬 전용(커밋 금지): `DESIGN.md`(디자인 기준 + refero 참고 원본), `.plans/`(작업 계획, `BLOG_PLAN.md`). `.git/info/exclude`로 제외되어 있다.
+- 로컬 전용(커밋 금지): `DESIGN.md`(디자인 기준 + refero 참고 원본), `DESIGN-anthropic.md`(refero 참고 원본, 2026-10-17 추가), `.plans/`(작업 계획, `BLOG_PLAN.md`). `.git/info/exclude`로 제외되어 있다.
 
 ## 개발 원칙 (2026-10-17 사용자 지시)
 
