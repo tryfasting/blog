@@ -63,6 +63,14 @@ function setUp() {
 
   input.addEventListener('input', () => void search(input.value.trim()));
 
+  // A visitor who lands and searches right away would otherwise wait for the first download (about
+  // 1.3 s on GitHub Pages), so fetch Pagefind once the page is idle. Visitors who asked to save data skip it.
+  if (!navigator.connection?.saveData) {
+    const preload = () => void loadPagefind();
+    if ('requestIdleCallback' in window) requestIdleCallback(preload, { timeout: 2000 });
+    else setTimeout(preload, 1000);
+  }
+
   /** @param {string} term */
   async function search(term) {
     if (!term) {
