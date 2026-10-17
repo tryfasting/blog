@@ -1,12 +1,12 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getPublishedPosts, postUrl, withBase } from '../blog/posts';
-import { blogDescription, blogTitle } from '../blog/site';
+import { blogDescription, blogFullTitle } from '../blog/site';
 
 export async function GET(context: APIContext) {
   const posts = await getPublishedPosts();
   return rss({
-    title: blogTitle,
+    title: blogFullTitle,
     description: blogDescription,
     // Channel <link> points at the blog home; item links are absolute paths, so they resolve the same.
     site: new URL(withBase('/'), context.site ?? 'https://tryfasting.github.io').href,

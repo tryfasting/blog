@@ -3,7 +3,7 @@ import 'pretendard/dist/web/variable/pretendardvariable.css';
 import '@fontsource-variable/source-serif-4/wght.css';
 import '@fontsource/noto-serif-kr/400.css';
 import './blog.css';
-import { authorName, blogTitle } from './site';
+import { authorName, blogFullTitle, blogSubtitle, blogTitle } from './site';
 import { withBase } from './posts';
 
 interface Props {
@@ -16,7 +16,8 @@ interface Props {
   wide?: boolean;
 }
 const { title, description, publishedTime, tags = [], wide = false } = Astro.props;
-const pageTitle = title === blogTitle ? title : `${title} — ${blogTitle}`;
+// The list page tab shows the full name; other tabs put the page title first and stay short.
+const pageTitle = title === blogTitle ? blogFullTitle : `${title} — ${blogTitle}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://tryfasting.github.io');
 const home = withBase('/');
 const rssUrl = new URL(withBase('/rss.xml'), Astro.site ?? 'https://tryfasting.github.io');
@@ -31,10 +32,10 @@ const isList = Astro.url.pathname === home;
     <meta name="author" content={authorName} />
     <meta name="theme-color" content="#f0eee6" />
     <link rel="canonical" href={canonical.href} />
-    <link rel="alternate" type="application/rss+xml" title={blogTitle} href={rssUrl.href} />
+    <link rel="alternate" type="application/rss+xml" title={blogFullTitle} href={rssUrl.href} />
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
     <meta property="og:type" content={publishedTime ? 'article' : 'website'} />
-    <meta property="og:site_name" content={blogTitle} />
+    <meta property="og:site_name" content={blogFullTitle} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
@@ -47,7 +48,7 @@ const isList = Astro.url.pathname === home;
     <a class="skip" href="#main">본문으로 건너뛰기</a>
     <div class="masthead">
       <header class="blog-header">
-        <a class="blog-home" href={home}>{blogTitle}</a>
+        <a class="blog-home" href={home}>{blogTitle}<span class="blog-subtitle"><span class="blog-subtitle-sep" aria-hidden="true"> / </span>{blogSubtitle}</span></a>
         <nav aria-label="블로그 메뉴">
           <a href={home} aria-current={isList ? 'page' : undefined}>글 목록</a>
           {/* The portfolio is a separate site on the same domain, so no base prefix. */}
