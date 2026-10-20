@@ -60,10 +60,14 @@ test('drafts and desk/ manuscripts are left out of every built page, the RSS fee
   mkdirSync(deskDir, { recursive: true });
   writeFileSync(deskFile, post({ title: 'GUARD-DESK-MANUSCRIPT' }));
   try {
-    const { failed, output } = buildWith({ '2026-01-01-guard-flagged.md': post({ title: 'GUARD-FLAGGED', draft: true }) });
+    // A published guard post in the same build, so the check does not depend on which real posts exist.
+    const { failed, output } = buildWith({
+      '2026-01-01-guard-published.md': post({ title: 'GUARD-PUBLISHED' }),
+      '2026-01-01-guard-flagged.md': post({ title: 'GUARD-FLAGGED', draft: true }),
+    });
     assert.equal(failed, false, output);
     const built = builtText();
-    assert.match(built, /blog-opened/, 'the published post should still be built');
+    assert.match(built, /GUARD-PUBLISHED/, 'a published post should still be built');
     assert.doesNotMatch(built, /GUARD-FLAGGED|guard-flagged|GUARD-DESK-MANUSCRIPT|guard-desk-manuscript/);
   } finally {
     rmSync(deskFile, { force: true });
